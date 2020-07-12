@@ -1,0 +1,78 @@
+workspace "Fierce-Engine"
+	architecture "x86_64"
+	startproject "Engine"
+
+	configurations
+	{
+		"Debug",
+		"Release"
+	}
+	
+	flags
+	{
+		"MultiProcessorCompile"
+	}
+
+outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
+-- Include directories relative to root folder (solution directory)
+IncludeDir = {}
+IncludeDir["VULKAN"] = "C:/VulkanSDK/1.2.131.2/Include"
+IncludeDir["DIRECTX_DXGI"] = "C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/shared"
+IncludeDir["DIRECTX_CORE"] = "C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/um"
+
+project "Engine"
+	location "Engine"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	
+	files
+	{
+		"%{prj.name}/**.h",
+		"%{prj.name}/**.cpp",
+		"%{prj.name}/**.ini",
+		"%{prj.name}/**.vert",
+		"%{prj.name}/**.frag",
+		"%{prj.name}/**.spv",
+		"%{prj.name}/shaders/CompileShaders.bat"
+	}
+
+	includedirs
+	{
+		"%{prj.name}",
+		"%{IncludeDir.VULKAN}",
+		"%{IncludeDir.DIRECTX_DXGI}",
+		"%{IncludeDir.DIRECTX_CORE}"
+	}
+	
+	libdirs 
+	{ 
+		"C:/VulkanSDK/1.2.131.2/Lib",
+		"C:/Program Files (x86)/Windows Kits/10/Lib/10.0.18362.0/um/x64"
+	}
+
+	links 
+	{ 
+		"vulkan-1.lib",
+		"d3d12.lib",
+		"dxgi.lib",
+		"d3dcompiler.lib"
+	}
+	
+	filter "system:windows"
+		systemversion "latest"
+
+	filter "configurations:Debug"
+		defines "FIERCE_DEBUG"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "FIERCE_RELEASE"
+		runtime "Release"
+		optimize "on"
