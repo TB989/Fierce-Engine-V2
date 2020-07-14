@@ -13,3 +13,4 @@
 
 ///////////////////////////////////////////
 #include "logging/Logger.h"
+#include "utils\FierceStrings.h"
