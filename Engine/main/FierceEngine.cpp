@@ -1,31 +1,17 @@
-#include "core\Core.h"
-#include "Common.h"
+#include "FierceEngine.h"
 
-class FierceGame : public Core {
+void FierceEngine::init(){
 
-protected:
-	virtual void init() {
-			
-	}
+}
 
-	virtual void update() {
+void FierceEngine::update(){
 
-	}
+}
 
-	virtual void render() {
+void FierceEngine::render(){
 
-	}
+}
 
-	virtual void cleanUp() {
-			
-	}
+void FierceEngine::cleanUp(){
 
-};
-
-int main() {
-	FierceGame app;
-
-	app.run();
-
-	return EXIT_SUCCESS;
 }

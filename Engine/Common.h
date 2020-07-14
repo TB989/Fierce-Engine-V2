@@ -10,3 +10,6 @@
 #include <sstream>
 
 #include <exception>
+
+///////////////////////////////////////////
+#include "logging/Logger.h"
