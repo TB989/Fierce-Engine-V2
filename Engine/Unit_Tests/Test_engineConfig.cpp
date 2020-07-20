@@ -3,7 +3,7 @@
 #include "parser/Parser.h"
 
 void Test_engineConfig::init() {
-	std::map<std::string, std::string> settings = Parser::parsePropertiesFile("C:/Users/Tobias/Desktop/GamEngine/Engine/Engine.ini");
+	std::map<std::string, std::string> settings = Parser::parsePropertiesFile("C:/Users/Tobias/Desktop/GameEngine/Engine/Engine.ini");
 
 	std::map<std::string, std::string>::iterator it = settings.begin();
 	while (it != settings.end()) {

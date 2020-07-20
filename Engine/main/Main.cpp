@@ -2,7 +2,7 @@
 #include "Unit_Tests/UnitTests.h"
 
 int main() {
-	Test_engineConfig app;
+	Test_logging app;
 
 	try {
 		app.run();
