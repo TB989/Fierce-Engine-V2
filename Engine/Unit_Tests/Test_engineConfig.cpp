@@ -2,7 +2,11 @@
 #include "core/EngineSettings.h"
 #include "parser/Parser.h"
 
-void Test_engineConfig::init() {
+Test_engineConfig::Test_engineConfig() {
+	eventSystem->addListener(this, &Test_engineConfig::onAppInit);
+}
+
+void Test_engineConfig::onAppInit(AppInitEvent* event) {
 	std::map<std::string, std::string> settings = Parser::parsePropertiesFile("C:/Users/Tobias/Desktop/GameEngine/Engine/Engine.ini");
 
 	std::map<std::string, std::string>::iterator it = settings.begin();
@@ -14,16 +18,4 @@ void Test_engineConfig::init() {
 	}
 
 	m_settings.parse(settings);
-}
-
-void Test_engineConfig::update() {
-
-}
-
-void Test_engineConfig::render() {
-
-}
-
-void Test_engineConfig::cleanUp() {
-
 }

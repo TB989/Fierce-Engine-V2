@@ -1,5 +1,13 @@
 #include "Core.h"
 
+Core::Core() {
+	eventSystem = new EventSystem();
+}
+
+Core::~Core() {
+	delete eventSystem;
+}
+
 void Core::run() {
 	coreInit();
 	coreUpdate();
@@ -8,17 +16,17 @@ void Core::run() {
 }
 
 void Core::coreInit() {
-	init();
+	eventSystem->postEvent(new AppInitEvent());
 }
 
 void Core::coreUpdate() {
-	update();
+	eventSystem->postEvent(new AppUpdateEvent(0));
 }
 
 void Core::coreRender() {
-	render();
+	eventSystem->postEvent(new AppRenderEvent());
 }
 
 void Core::coreCleanUp() {
-	cleanUp();
+	eventSystem->postEvent(new AppCleanUpEvent());
 }

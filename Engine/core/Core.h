@@ -1,18 +1,20 @@
 #pragma once
 
 #include "Common.h"
+#include "events/EventSystem.h"
 
 class Core {
-protected:
-	virtual void init() = 0;
-	virtual void update() = 0;
-	virtual void render() = 0;
-	virtual void cleanUp() = 0;
 private:
 	void coreInit();
 	void coreUpdate();
 	void coreRender();
 	void coreCleanUp();
 public:
+	Core();
+	~Core();
+
 	void run();
+
+protected:
+	EventSystem* eventSystem;
 };
