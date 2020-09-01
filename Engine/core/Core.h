@@ -15,6 +15,11 @@ public:
 
 	void run();
 
-protected:
+public:
 	EventSystem* eventSystem;
+
+private:
+	bool running=false;
+
+	void onWindowClosed(WindowCloseEvent* event);
 };

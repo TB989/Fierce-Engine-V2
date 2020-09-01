@@ -9,7 +9,8 @@
 #include <fstream>
 #include <sstream>
 
-#include <exception>
+#include "exceptions/Exceptions.h"
+#include "utils/FierceUtils.h"
 
 ///////////////////////////////////////////
 #include "logging/Logger.h"

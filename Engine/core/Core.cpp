@@ -2,6 +2,7 @@
 
 Core::Core() {
 	eventSystem = new EventSystem();
+	eventSystem->addListener(this, &Core::onWindowClosed);
 }
 
 Core::~Core() {
@@ -10,8 +11,12 @@ Core::~Core() {
 
 void Core::run() {
 	coreInit();
-	coreUpdate();
-	coreRender();
+
+	running = true;
+	while (running) {
+		coreUpdate();
+		coreRender();
+	}
 	coreCleanUp();
 }
 
@@ -29,4 +34,8 @@ void Core::coreRender() {
 
 void Core::coreCleanUp() {
 	eventSystem->postEvent(new AppCleanUpEvent());
+}
+
+void Core::onWindowClosed(WindowCloseEvent* event) {
+	running = false;
 }
