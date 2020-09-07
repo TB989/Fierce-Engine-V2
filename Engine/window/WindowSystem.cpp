@@ -84,13 +84,23 @@ FierceWindow::FierceWindow(LPCWSTR className, LPCWSTR title, EngineSettings sett
 }
 
 FIERCE_ERROR FierceWindow::createWindow(LPCWSTR className, LPCWSTR title,int x, int y, int width, int height) {
+
+	RECT r = RECT();
+	r.top = 0;
+	r.bottom = height;
+	r.left = 0;
+	r.right = width;
+	if (!AdjustWindowRectEx(&r, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_TOPMOST)) {
+		return FE_WINDOW_ERROR;
+	}
+
 	windowHandle = CreateWindowEx(
 		WS_EX_APPWINDOW | WS_EX_TOPMOST,
 		className,
 		title,
 		WS_OVERLAPPEDWINDOW,
 		0, 0,
-		width,height,
+		r.right-r.left,r.bottom-r.top,
 		NULL,
 		NULL,
 		GetModuleHandle(NULL),
