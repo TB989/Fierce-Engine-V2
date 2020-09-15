@@ -1,22 +1,19 @@
 #include "UnitTests.h"
 #include "parser/Parser.h"
 #include "gl/GL.h"
+#include "headers/openGL/glext.h"
+#include "headers/openGL/wglext.h"
 
 typedef HGLRC WINAPI wglCreateContextAttribsARB_type(HDC hdc, HGLRC hShareContext, const int* attribList);
-
 wglCreateContextAttribsARB_type* wglCreateContextAttribsARB=nullptr;
-
 // See https://www.opengl.org/registry/specs/ARB/wgl_create_context.txt for all values
 #define WGL_CONTEXT_MAJOR_VERSION_ARB             0x2091
 #define WGL_CONTEXT_MINOR_VERSION_ARB             0x2092
 #define WGL_CONTEXT_PROFILE_MASK_ARB              0x9126
-
 #define WGL_CONTEXT_CORE_PROFILE_BIT_ARB          0x00000001
 
 typedef BOOL WINAPI wglChoosePixelFormatARB_type(HDC hdc, const int* piAttribIList, const FLOAT * pfAttribFList, UINT nMaxFormats, int* piFormats, UINT * nNumFormats);
-
 wglChoosePixelFormatARB_type* wglChoosePixelFormatARB=nullptr;
-
 // See https://www.opengl.org/registry/specs/ARB/wgl_pixel_format.txt for all values
 #define WGL_DRAW_TO_WINDOW_ARB                    0x2001
 #define WGL_ACCELERATION_ARB                      0x2003
@@ -27,12 +24,53 @@ wglChoosePixelFormatARB_type* wglChoosePixelFormatARB=nullptr;
 #define WGL_DEPTH_BITS_ARB                        0x2022
 #define WGL_STENCIL_BITS_ARB                      0x2023
 #define WGL_ALPHA_BITS_ARB                        0x201B
-
 #define WGL_FULL_ACCELERATION_ARB                 0x2027
 #define WGL_TYPE_RGBA_ARB                         0x202B
 
 HGLRC context;
 HDC hdc;
+
+PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
+PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
+
+PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
+PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray;
+PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
+
+PFNGLGENBUFFERSPROC glGenBuffers;
+PFNGLBINDBUFFERPROC glBindBuffer;
+PFNGLBUFFERDATAPROC glBufferData;
+
+PFNGLCREATESHADERPROC glCreateShader;
+PFNGLSHADERSOURCEPROC glShaderSource;
+PFNGLCOMPILESHADERPROC glCompileShader;
+PFNGLGETSHADERIVPROC glGetShaderiv;
+PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
+
+PFNGLCREATEPROGRAMPROC glCreateProgram;
+PFNGLATTACHSHADERPROC glAttachShader;
+PFNGLLINKPROGRAMPROC glLinkProgram;
+PFNGLGETPROGRAMIVPROC glGetProgramiv;
+PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
+PFNGLDETACHSHADERPROC glDetachShader;
+PFNGLDELETESHADERPROC glDeleteShader;
+PFNGLUSEPROGRAMPROC glUseProgram;
+
+GLuint vaoId;
+GLuint vboId;
+
+GLuint vsId;
+GLuint fsId;
+GLuint pId;
+
+void* GetAnyGLFuncAddress(const char* name){
+	void* p = (void*)wglGetProcAddress(name);
+	if (p == 0 ||(p == (void*)0x1) || (p == (void*)0x2) || (p == (void*)0x3) ||(p == (void*)-1)){
+		Loggers::GL->error("Failed to load function %s.",name);
+	}
+
+	return p;
+}
 
 Test_openGLContext::Test_openGLContext() {
 	eventSystem->addListener(this, &Test_openGLContext::onAppInit);
@@ -133,14 +171,146 @@ void Test_openGLContext::onAppInit(AppInitEvent* event) {
 		Loggers::CORE->error("Failed to make current context.");
 	}
 
+	glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)GetAnyGLFuncAddress("glGenVertexArrays");
+	glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)GetAnyGLFuncAddress("glBindVertexArray");
+
+	glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)GetAnyGLFuncAddress("glEnableVertexAttribArray");
+	glDisableVertexAttribArray = (PFNGLDISABLEVERTEXATTRIBARRAYPROC)GetAnyGLFuncAddress("glDisableVertexAttribArray");
+	glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)GetAnyGLFuncAddress("glVertexAttribPointer");
+
+	glGenBuffers = (PFNGLGENBUFFERSPROC)GetAnyGLFuncAddress("glGenBuffers");
+	glBindBuffer = (PFNGLBINDBUFFERPROC)GetAnyGLFuncAddress("glBindBuffer");
+	glBufferData = (PFNGLBUFFERDATAPROC)GetAnyGLFuncAddress("glBufferData");
+
+	glCreateShader = (PFNGLCREATESHADERPROC)GetAnyGLFuncAddress("glCreateShader");
+	glShaderSource = (PFNGLSHADERSOURCEPROC)GetAnyGLFuncAddress("glShaderSource");
+	glCompileShader = (PFNGLCOMPILESHADERPROC)GetAnyGLFuncAddress("glCompileShader");
+	glGetShaderiv = (PFNGLGETSHADERIVPROC)GetAnyGLFuncAddress("glGetShaderiv");
+	glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)GetAnyGLFuncAddress("glGetShaderInfoLog");
+
+	glCreateProgram = (PFNGLCREATEPROGRAMPROC)GetAnyGLFuncAddress("glCreateProgram");
+	glAttachShader = (PFNGLATTACHSHADERPROC)GetAnyGLFuncAddress("glAttachShader");
+	glLinkProgram = (PFNGLLINKPROGRAMPROC)GetAnyGLFuncAddress("glLinkProgram");
+	glGetProgramiv = (PFNGLGETPROGRAMIVPROC)GetAnyGLFuncAddress("glGetProgramiv");
+	glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)GetAnyGLFuncAddress("glGetProgramInfoLog");
+	glDetachShader = (PFNGLDETACHSHADERPROC)GetAnyGLFuncAddress("glDetachShader");
+	glDeleteShader = (PFNGLDELETESHADERPROC)GetAnyGLFuncAddress("glDeleteShader");
+	glUseProgram = (PFNGLUSEPROGRAMPROC)GetAnyGLFuncAddress("glUseProgram");
+
+	glGenVertexArrays(1, &vaoId);
+	glBindVertexArray(vaoId);
+
+	// An array of 3 vectors which represents 3 vertices
+	static const GLfloat g_vertex_buffer_data[] = {
+	   -1.0f, -1.0f, 0.0f,
+	   1.0f, -1.0f, 0.0f,
+	   0.0f,  1.0f, 0.0f,
+	};
+
+	// Generate 1 buffer, put the resulting identifier in vertexbuffer
+	glGenBuffers(1, &vboId);
+	// The following commands will talk about our 'vertexbuffer' buffer
+	glBindBuffer(GL_ARRAY_BUFFER, vboId);
+	// Give our vertices to OpenGL.
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+	vsId = glCreateShader(GL_VERTEX_SHADER);
+	fsId = glCreateShader(GL_FRAGMENT_SHADER);
+
+	std::string vsCode;
+	std::ifstream vsStream("C:/Users/Tobias/Desktop/GameEngine/Engine/ressources/shaders/openGL/MyFirstShader.vert", std::ios::in);
+	if (vsStream.is_open()) {
+		std::stringstream sstr;
+		sstr << vsStream.rdbuf();
+		vsCode = sstr.str();
+		vsStream.close();
+	}
+	else {
+		Loggers::GL->error("Unable to read vertex shader.");
+	}
+
+	std::string fsCode;
+	std::ifstream fsStream("C:/Users/Tobias/Desktop/GameEngine/Engine/ressources/shaders/openGL/MyFirstShader.frag", std::ios::in);
+	if (fsStream.is_open()) {
+		std::stringstream sstr;
+		sstr << fsStream.rdbuf();
+		fsCode = sstr.str();
+		fsStream.close();
+	}
+	else {
+		Loggers::GL->error("Unable to read fragment shader.");
+	}
+
+	GLint Result = GL_FALSE;
+	int InfoLogLength;
+
+	// Compile Vertex Shader
+	char const* VertexSourcePointer = vsCode.c_str();
+	glShaderSource(vsId, 1, &VertexSourcePointer, NULL);
+	glCompileShader(vsId);
+
+	// Check Vertex Shader
+	glGetShaderiv(vsId, GL_COMPILE_STATUS, &Result);
+	glGetShaderiv(vsId, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0) {
+		std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
+		glGetShaderInfoLog(vsId, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+		Loggers::GL->error("%s\n", &VertexShaderErrorMessage[0]);
+	}
+
+	// Compile Fragment Shader
+	char const* FragmentSourcePointer = fsCode.c_str();
+	glShaderSource(fsId, 1, &FragmentSourcePointer, NULL);
+	glCompileShader(fsId);
+
+	// Check Fragment Shader
+	glGetShaderiv(fsId, GL_COMPILE_STATUS, &Result);
+	glGetShaderiv(fsId, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0) {
+		std::vector<char> FragmentShaderErrorMessage(InfoLogLength + 1);
+		glGetShaderInfoLog(fsId, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
+		Loggers::GL->error("%s\n", &FragmentShaderErrorMessage[0]);
+	}
+
+	// Link the program
+	pId = glCreateProgram();
+	glAttachShader(pId, vsId);
+	glAttachShader(pId, fsId);
+	glLinkProgram(pId);
+
+	// Check the program
+	glGetProgramiv(pId, GL_LINK_STATUS, &Result);
+	glGetProgramiv(pId, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0) {
+		std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
+		glGetProgramInfoLog(pId, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+		Loggers::GL->error("%s\n", &ProgramErrorMessage[0]);
+	}
+
 	window->show();
 }
 
 void Test_openGLContext::onAppUpdate(AppUpdateEvent* event) {
 	window->pollEvents();
 
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// 1st attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER,vboId);
+	glVertexAttribPointer(
+		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+		3,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		0,                  // stride
+		(void*)0            // array buffer offset
+	);
+	glUseProgram(pId);
+	// Draw the triangle !
+	glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
+	glDisableVertexAttribArray(0);
 
 	SwapBuffers(hdc);
 }
