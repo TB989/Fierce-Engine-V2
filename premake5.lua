@@ -20,6 +20,7 @@ IncludeDir = {}
 IncludeDir["VULKAN"] = "C:/VulkanSDK/1.2.131.2/Include"
 IncludeDir["DIRECTX_DXGI"] = "C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/shared"
 IncludeDir["DIRECTX_CORE"] = "C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/um"
+IncludeDir["EXTERNAL"] = "C:/Users/Tobias/Desktop/GameEngine/external"
 
 project "Engine"
 	location "Engine"
@@ -47,7 +48,8 @@ project "Engine"
 		"%{prj.name}",
 		"%{IncludeDir.VULKAN}",
 		"%{IncludeDir.DIRECTX_DXGI}",
-		"%{IncludeDir.DIRECTX_CORE}"
+		"%{IncludeDir.DIRECTX_CORE}",
+		"%{IncludeDir.EXTERNAL}"
 	}
 	
 	libdirs 
