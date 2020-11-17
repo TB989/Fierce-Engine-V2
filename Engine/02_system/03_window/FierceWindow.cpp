@@ -3,8 +3,8 @@
 #include "01_core/errorHandling/Exceptions.h"
 #include "02_system/01_logging/Logger.h"
 
-FierceWindow::FierceWindow(LPCWSTR className, LPCWSTR title, EngineSettings settings) {
-	CHECK_FIERCE(createWindow(className, title, CW_USEDEFAULT, CW_USEDEFAULT, settings.width, settings.height), "Failed to create window.");
+FierceWindow::FierceWindow(LPCWSTR className, LPCWSTR title, EngineSettings* settings) {
+	CHECK_FIERCE(createWindow(className, title, CW_USEDEFAULT, CW_USEDEFAULT, settings->width, settings->height), "Failed to create window.");
 }
 
 FierceWindow::~FierceWindow(){

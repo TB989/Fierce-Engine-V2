@@ -22,6 +22,7 @@ PFNGLBUFFERDATAPROC glBufferData;
 
 //**********Shaders********************************
 PFNGLCREATESHADERPROC glCreateShader;
+PFNGLDELETESHADERPROC glDeleteShader;
 PFNGLSHADERSOURCEPROC glShaderSource;
 PFNGLCOMPILESHADERPROC glCompileShader;
 PFNGLGETSHADERIVPROC glGetShaderiv;
@@ -30,14 +31,14 @@ PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
 
 //**********Shaders Program************************
 PFNGLCREATEPROGRAMPROC glCreateProgram;
+PFNGLDELETEPROGRAMPROC glDeleteProgram;
 PFNGLATTACHSHADERPROC glAttachShader;
+PFNGLDETACHSHADERPROC glDetachShader;
 PFNGLLINKPROGRAMPROC glLinkProgram;
 PFNGLVALIDATEPROGRAMPROC glValidateProgram;
+PFNGLUSEPROGRAMPROC glUseProgram;
 PFNGLGETPROGRAMIVPROC glGetProgramiv;
 PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
-PFNGLDETACHSHADERPROC glDetachShader;
-PFNGLDELETESHADERPROC glDeleteShader;
-PFNGLUSEPROGRAMPROC glUseProgram;
 //*************************************************
 
 void* getGLFunctionPointer(const char* name) {
@@ -64,18 +65,19 @@ void loadAllGLFunctions() {
 	glDeleteBuffers = (PFNGLDELETEBUFFERSPROC)getGLFunctionPointer("glDeleteBuffers");
 
 	glCreateShader = (PFNGLCREATESHADERPROC)getGLFunctionPointer("glCreateShader");
+	glDeleteShader = (PFNGLDELETESHADERPROC)getGLFunctionPointer("glDeleteShader");
 	glShaderSource = (PFNGLSHADERSOURCEPROC)getGLFunctionPointer("glShaderSource");
 	glCompileShader = (PFNGLCOMPILESHADERPROC)getGLFunctionPointer("glCompileShader");
 	glGetShaderiv = (PFNGLGETSHADERIVPROC)getGLFunctionPointer("glGetShaderiv");
 	glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)getGLFunctionPointer("glGetShaderInfoLog");
 
 	glCreateProgram = (PFNGLCREATEPROGRAMPROC)getGLFunctionPointer("glCreateProgram");
+	glDeleteProgram = (PFNGLDELETEPROGRAMPROC)getGLFunctionPointer("glDeleteProgram");
 	glAttachShader = (PFNGLATTACHSHADERPROC)getGLFunctionPointer("glAttachShader");
+	glDetachShader = (PFNGLDETACHSHADERPROC)getGLFunctionPointer("glDetachShader");
 	glLinkProgram = (PFNGLLINKPROGRAMPROC)getGLFunctionPointer("glLinkProgram");
 	glValidateProgram = (PFNGLVALIDATEPROGRAMPROC)getGLFunctionPointer("glValidateProgram");
+	glUseProgram = (PFNGLUSEPROGRAMPROC)getGLFunctionPointer("glUseProgram");
 	glGetProgramiv = (PFNGLGETPROGRAMIVPROC)getGLFunctionPointer("glGetProgramiv");
 	glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)getGLFunctionPointer("glGetProgramInfoLog");
-	glDetachShader = (PFNGLDETACHSHADERPROC)getGLFunctionPointer("glDetachShader");
-	glDeleteShader = (PFNGLDELETESHADERPROC)getGLFunctionPointer("glDeleteShader");
-	glUseProgram = (PFNGLUSEPROGRAMPROC)getGLFunctionPointer("glUseProgram");
 }

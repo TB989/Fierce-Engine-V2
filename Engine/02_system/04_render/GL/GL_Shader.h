@@ -5,7 +5,7 @@
 *  -Objects: Object myObject;
 */
 #include "Fierce_GL.h"
-
+#include "99_utils/FierceStrings.h"
 
 /* SystemIncludes*/
 
@@ -16,18 +16,21 @@
 *              Pointer* MyFunction(Pointer* myPointer);
 *              Reference& MyFunction(Reference& myReference);
 */
-class GL_VBO;
 
-class GL_VAO {
+class GL_Shader{
 public:
-	GL_VAO(GL_VBO* vertexBuffer);
-	~GL_VAO();
-	void bind();
-	void unbind();
+	GL_Shader(std::string path);
+	~GL_Shader();
 
-	void vertexAttribPointer(GLuint index, GLint size, GLenum type);
-	void draw();
+	GLuint getId() { return id; };
 private:
-	GLuint m_id;
-	GL_VBO* m_vertexBuffer=nullptr;
+	GLenum getType(std::string path);
+	std::string readSourceCode(std::string path);
+
+private:
+	static const std::string SHADER_LIBRARY;
+
+	std::string name="";
+	GLuint id=-1;
+	GLenum type=-1;
 };

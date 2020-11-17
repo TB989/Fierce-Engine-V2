@@ -50,7 +50,11 @@ static inline void trim(std::string& s) {
 }
 
 static inline bool startsWith(const std::string& s, const std::string& token) {
-	return s.rfind(token, 0) == 0;
+	return s.find(token) == 0;
+}
+
+static inline bool endsWith(const std::string& s, const std::string& token) {
+	return s.rfind(token) == (s.size()-token.size());
 }
 
 static inline bool contains(const std::string& s, const std::string& token) {

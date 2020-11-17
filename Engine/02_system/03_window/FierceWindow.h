@@ -21,7 +21,7 @@ enum FIERCE_ERROR;
 
 class FierceWindow {
 public:
-	FierceWindow(LPCWSTR className, LPCWSTR title, EngineSettings settings);
+	FierceWindow(LPCWSTR className, LPCWSTR title, EngineSettings* settings);
 	~FierceWindow();
 
 	void pollEvents();

@@ -24,7 +24,7 @@ struct WindowRequestHandleEvent;
 
 class WindowSystem {
 public:
-	WindowSystem(Core* app, EngineSettings settings);//TODO: Give EngineSettings as reference
+	WindowSystem(Core* app, EngineSettings* settings);
 	~WindowSystem();
 
 	template<typename EventType>
@@ -41,7 +41,7 @@ private:
 	void onHandleRequested(WindowRequestHandleEvent* evt);
 private:
 	Core* m_app=nullptr;
-	EngineSettings m_settings = {};
+	EngineSettings* m_settings = {};
 
 	HINSTANCE hInstance=nullptr;
 	LPCWSTR fierceWindowClassName = L"FierceWindow";

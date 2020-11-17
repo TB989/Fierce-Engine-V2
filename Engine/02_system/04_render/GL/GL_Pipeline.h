@@ -5,9 +5,10 @@
 *  -Objects: Object myObject;
 */
 #include "Fierce_GL.h"
-
+#include "99_utils/FierceStrings.h"
 
 /* SystemIncludes*/
+#include <vector>
 
 /* Forward declarations: 
 *  -Pointers:  Pointer* myPointer;
@@ -16,18 +17,17 @@
 *              Pointer* MyFunction(Pointer* myPointer);
 *              Reference& MyFunction(Reference& myReference);
 */
-class GL_VBO;
+class GL_Shader;
 
-class GL_VAO {
+class GL_Pipeline{
 public:
-	GL_VAO(GL_VBO* vertexBuffer);
-	~GL_VAO();
+	GL_Pipeline(std::string name,GL_Shader* shader1,GL_Shader* shader2);
+	~GL_Pipeline();
+
 	void bind();
 	void unbind();
-
-	void vertexAttribPointer(GLuint index, GLint size, GLenum type);
-	void draw();
 private:
-	GLuint m_id;
-	GL_VBO* m_vertexBuffer=nullptr;
+	GLuint id;
+	std::string m_name;
+	std::vector<GL_Shader*> shaderList;
 };

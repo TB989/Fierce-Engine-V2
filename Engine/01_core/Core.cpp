@@ -17,7 +17,7 @@ Core::Core() {
 	eventSystem->addListener(this, &Core::onWindowClosed);
 
 	Loggers::CORE->info("Starting window system.");
-	windowSystem = new WindowSystem(this,m_settings);
+	windowSystem = new WindowSystem(this,&m_settings);
 	m_window=windowSystem->createWindow();
 }
 
@@ -33,6 +33,7 @@ void Core::run() {
 
 	m_window->show();
 	running = true;
+	Loggers::CORE->info("Starting game loop.");
 	while (running) {
 		m_window->pollEvents();
 		coreUpdate();

@@ -38,6 +38,7 @@ extern PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
 
 //**********Shaders********************************
 extern PFNGLCREATESHADERPROC glCreateShader;
+extern PFNGLDELETESHADERPROC glDeleteShader;
 extern PFNGLSHADERSOURCEPROC glShaderSource;
 extern PFNGLCOMPILESHADERPROC glCompileShader;
 extern PFNGLGETSHADERIVPROC glGetShaderiv;
@@ -46,12 +47,12 @@ extern PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
 
 //**********Shaders Program************************
 extern PFNGLCREATEPROGRAMPROC glCreateProgram;
+extern PFNGLDELETEPROGRAMPROC glDeleteProgram;
 extern PFNGLATTACHSHADERPROC glAttachShader;
+extern PFNGLDETACHSHADERPROC glDetachShader;
 extern PFNGLLINKPROGRAMPROC glLinkProgram;
 extern PFNGLVALIDATEPROGRAMPROC glValidateProgram;
+extern PFNGLUSEPROGRAMPROC glUseProgram;
 extern PFNGLGETPROGRAMIVPROC glGetProgramiv;
 extern PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
-extern PFNGLDETACHSHADERPROC glDetachShader;
-extern PFNGLDELETESHADERPROC glDeleteShader;
-extern PFNGLUSEPROGRAMPROC glUseProgram;
 //*************************************************

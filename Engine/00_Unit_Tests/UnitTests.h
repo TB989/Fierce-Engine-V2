@@ -17,6 +17,10 @@
 *              Reference& MyFunction(Reference& myReference);
 */
 class GL_Context;
+class GL_Shader;
+class GL_Pipeline;
+class GL_VBO;
+class GL_VAO;
 
 class Test_logging : public Core {
 
@@ -51,7 +55,10 @@ public:
 
 	void onWindowResize(WindowResizeEvent* event);
 private:
-	EngineSettings m_settings = {};
-	//WindowSystem* windowSystem=nullptr;
 	GL_Context* context=nullptr;
+	GL_VBO* vbo=nullptr;
+	GL_VAO* vao=nullptr;
+	GL_Shader* vertexShader=nullptr;
+	GL_Shader* fragmentShader=nullptr;
+	GL_Pipeline* pipeline=nullptr;
 };

@@ -15,20 +15,20 @@ LRESULT CALLBACK wndProcFierceWindow(HWND hWnd, UINT message, WPARAM wParam, LPA
 	switch (message) {
 	case WM_CLOSE:
 		windowSystem->postEvent(new WindowCloseEvent());
-		break;
+		return 0;
 	case WM_SIZE:
 		windowSystem->postEvent(new WindowResizeEvent(LOWORD(lParam), HIWORD(lParam)));
-		break;
+		return 0;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
-
-	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 LRESULT CALLBACK wndProcFierceDummyWindow(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-WindowSystem::WindowSystem(Core* app, EngineSettings settings){
+WindowSystem::WindowSystem(Core* app, EngineSettings* settings){
 	m_app = app;
 	m_settings = settings;
 	hInstance= GetModuleHandle(NULL);
@@ -44,6 +44,7 @@ WindowSystem::WindowSystem(Core* app, EngineSettings settings){
 
 WindowSystem::~WindowSystem(){
 	delete m_dummyWindow;
+	delete m_window;
 	CHECK_FIERCE(unregisterWindowClass(fierceWindowClassName), "Failed to unregister window class for fierce window.");
 	CHECK_FIERCE(unregisterWindowClass(fierceDummyWindowClassName), "Failed to unregister window class for fierce dummy window.");
 }

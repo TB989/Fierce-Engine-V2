@@ -27,3 +27,7 @@ void GL_VAO::vertexAttribPointer(GLuint index,GLint size,GLenum type){
 	glBindVertexArray(0);
 	m_vertexBuffer->unbind();
 }
+
+void GL_VAO::draw(){
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+}
