@@ -16,14 +16,18 @@ Core::Core() {
 	eventSystem = new EventSystem();
 	eventSystem->addListener(this, &Core::onWindowClosed);
 
-	Loggers::CORE->info("Starting window system.");
-	windowSystem = new WindowSystem(this,&m_settings);
-	m_window=windowSystem->createWindow();
+	if (m_settings.windowMode!=HEADLESS) {
+		Loggers::CORE->info("Starting window system.");
+		windowSystem = new WindowSystem(this, &m_settings);
+		m_window = windowSystem->createWindow();
+	}
 }
 
 Core::~Core() {
-	Loggers::CORE->info("Stopping window system.");
-	delete windowSystem;
+	if (m_settings.windowMode != HEADLESS) {
+		Loggers::CORE->info("Stopping window system.");
+		delete windowSystem;
+	}
 	Loggers::CORE->info("Stopping event system.");
 	delete eventSystem;
 }
@@ -31,9 +35,13 @@ Core::~Core() {
 void Core::run() {
 	coreInit();
 
-	m_window->show();
-	running = true;
-	Loggers::CORE->info("Starting game loop.");
+	running = false;
+	if (m_settings.windowMode != HEADLESS) {
+		m_window->show();
+		Loggers::CORE->info("Starting game loop.");
+		running = true;
+	}
+
 	while (running) {
 		m_window->pollEvents();
 		coreUpdate();

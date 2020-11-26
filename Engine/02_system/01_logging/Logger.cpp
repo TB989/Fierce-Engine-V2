@@ -111,3 +111,4 @@ Logger* Loggers::CORE = new Logger("CORE");
 Logger* Loggers::GL = new Logger("GL");
 Logger* Loggers::VK = new Logger("VK");
 Logger* Loggers::DX = new Logger("DX");
+Logger* Loggers::MATH = new Logger("MATH");

@@ -49,4 +49,5 @@ public:
 	static Logger* GL;
 	static Logger* VK;
 	static Logger* DX;
+	static Logger* MATH;
 };

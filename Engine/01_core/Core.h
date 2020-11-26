@@ -34,8 +34,8 @@ public:
 
 public:
 	EngineSettings m_settings;
-	EventSystem* eventSystem;
-	WindowSystem* windowSystem;
+	EventSystem* eventSystem=nullptr;
+	WindowSystem* windowSystem=nullptr;
 
 private:
 	bool running = false;

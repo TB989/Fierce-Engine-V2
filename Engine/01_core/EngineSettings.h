@@ -24,9 +24,15 @@ enum API {
 	DIRECT_X
 };
 
+enum WINDOW_MODE {
+	HEADLESS,
+	WINDOWED,
+	FULLSCREEN
+};
+
 struct EngineSettings {
 	//Window
-	bool fullscreen = false;
+	WINDOW_MODE windowMode = WINDOWED;
 	int width = 800;
 	int height = 600;
 
@@ -41,12 +47,15 @@ struct EngineSettings {
 		while (it != settings.end()) {
 			std::string key = it->first;
 			std::string value = it->second;
-			if (key == "fullscreen" || key == "FULLSCREEN") {
-				if (value == "true" || value == "TRUE") {
-					fullscreen = true;
+			if (key == "windowMode" || key == "WINDOW_MODE") {
+				if (value == "headless" || value == "HEADLESS") {
+					windowMode = HEADLESS;
 				}
-				if (value == "false" || value == "FALSE") {
-					fullscreen = false;
+				if (value == "windowed" || value == "WINDOWED") {
+					windowMode = WINDOWED;
+				}
+				if (value == "fullscreen" || value == "FULLSCREEN") {
+					windowMode = FULLSCREEN;
 				}
 			}
 			if (key == "width" || key == "WIDTH") {

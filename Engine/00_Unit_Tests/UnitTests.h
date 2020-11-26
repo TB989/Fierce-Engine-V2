@@ -62,3 +62,9 @@ private:
 	GL_Shader* fragmentShader=nullptr;
 	GL_Pipeline* pipeline=nullptr;
 };
+
+class Test_math : public Core {
+public:
+	Test_math();
+	void onAppInit(AppInitEvent* event);
+};
