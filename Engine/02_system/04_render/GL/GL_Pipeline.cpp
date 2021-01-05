@@ -2,6 +2,7 @@
 
 #include "02_system/01_logging/Logger.h"
 #include "02_system/04_render/GL/GL_Shader.h"
+#include "04_math/02_matrix/Matrix.h"
 
 GL_Pipeline::GL_Pipeline(std::string name,GL_Shader* shader1,GL_Shader* shader2){
 	m_name = name;
@@ -56,4 +57,28 @@ void GL_Pipeline::bind(){
 
 void GL_Pipeline::unbind(){
 	glUseProgram(0);
+}
+
+void GL_Pipeline::addUniformLocation(std::string name){
+	GLint location=glGetUniformLocation(id, name.c_str());
+	if (location==-1) {
+		Loggers::GL->warn("Uniform location %s is not found in shader.", name.c_str());
+	}
+	else {
+		UniformLocation loc = {name,location};
+		uniformLocations.push_back(loc);
+	}
+}
+
+void GL_Pipeline::loadUniform(std::string location, Mat4* matrix){
+	GLint load = -1;
+	for (const UniformLocation loc : uniformLocations) {
+		if (loc.name.compare(location) == 0) {
+			load = loc.location;
+			glUniformMatrix4fv(load, 1, GL_TRUE, matrix->get());
+			return;
+		}
+	}
+
+	Loggers::GL->warn("Uniform location %s is not found in shader.", location.c_str());
 }

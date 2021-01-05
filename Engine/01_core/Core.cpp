@@ -11,16 +11,10 @@ Core::Core() {
 	Loggers::CORE->info("Loading engine settings.");
 	std::map<std::string, std::string> settings = Parser::parsePropertiesFile("C:/Users/Tobias/Desktop/GameEngine/Engine/Engine.ini");
 	m_settings.parse(settings);
-
+	
 	Loggers::CORE->info("Starting event system.");
 	eventSystem = new EventSystem();
 	eventSystem->addListener(this, &Core::onWindowClosed);
-
-	if (m_settings.windowMode!=HEADLESS) {
-		Loggers::CORE->info("Starting window system.");
-		windowSystem = new WindowSystem(this, &m_settings);
-		m_window = windowSystem->createWindow();
-	}
 }
 
 Core::~Core() {
@@ -51,6 +45,12 @@ void Core::run() {
 }
 
 void Core::coreInit() {
+	if (m_settings.windowMode != HEADLESS) {
+		Loggers::CORE->info("Starting window system.");
+		windowSystem = new WindowSystem(this, &m_settings);
+		m_window = windowSystem->createWindow();
+	}
+
 	Loggers::CORE->info("Starting engine.");
 	eventSystem->postEvent(new AppInitEvent());
 }

@@ -39,6 +39,9 @@ PFNGLVALIDATEPROGRAMPROC glValidateProgram;
 PFNGLUSEPROGRAMPROC glUseProgram;
 PFNGLGETPROGRAMIVPROC glGetProgramiv;
 PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
+
+PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
 //*************************************************
 
 void* getGLFunctionPointer(const char* name) {
@@ -80,4 +83,7 @@ void loadAllGLFunctions() {
 	glUseProgram = (PFNGLUSEPROGRAMPROC)getGLFunctionPointer("glUseProgram");
 	glGetProgramiv = (PFNGLGETPROGRAMIVPROC)getGLFunctionPointer("glGetProgramiv");
 	glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)getGLFunctionPointer("glGetProgramInfoLog");
+
+	glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)getGLFunctionPointer("glGetUniformLocation");
+	glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)getGLFunctionPointer("glUniformMatrix4fv");
 }

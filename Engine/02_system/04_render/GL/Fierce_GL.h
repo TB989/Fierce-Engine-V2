@@ -55,4 +55,7 @@ extern PFNGLVALIDATEPROGRAMPROC glValidateProgram;
 extern PFNGLUSEPROGRAMPROC glUseProgram;
 extern PFNGLGETPROGRAMIVPROC glGetProgramiv;
 extern PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
+
+extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+extern PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
 //*************************************************

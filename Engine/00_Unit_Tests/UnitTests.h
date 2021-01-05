@@ -17,7 +17,7 @@
 *              Reference& MyFunction(Reference& myReference);
 */
 class GL_Context;
-class GL_Shader;
+class GL_Shader_Color;
 class GL_Pipeline;
 class GL_VBO;
 class GL_VAO;
@@ -58,8 +58,8 @@ private:
 	GL_Context* context=nullptr;
 	GL_VBO* vbo=nullptr;
 	GL_VAO* vao=nullptr;
-	GL_Shader* vertexShader=nullptr;
-	GL_Shader* fragmentShader=nullptr;
+	GL_Shader_Color* vertexShader=nullptr;
+	GL_Shader_Color* fragmentShader=nullptr;
 	GL_Pipeline* pipeline=nullptr;
 };
 

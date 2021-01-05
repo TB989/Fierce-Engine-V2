@@ -11,6 +11,8 @@
 #include "02_system/04_render/GL/GL_VBO.h"
 #include "02_system/04_render/GL/GL_VAO.h"
 #include "02_system/04_render/GL/Fierce_GL.h"
+#include "02_system/04_render/GL_Shader_Color.h"
+#include "04_math/02_matrix/Matrix.h"
 #include "03_io/parser/Parser.h"
 
 Test_openGLContext::Test_openGLContext() {
@@ -36,10 +38,25 @@ void Test_openGLContext::onAppInit(AppInitEvent* event) {
 	vao = new GL_VAO(vbo);
 	vao->vertexAttribPointer(0, 3, GL_FLOAT);
 
-	vertexShader=new GL_Shader("MyFirstShader.vs");
-	fragmentShader=new GL_Shader("MyFirstShader.fs");
+	vertexShader=new GL_Shader_Color("MyFirstShader.vs");
+	fragmentShader=new GL_Shader_Color("MyFirstShader.fs");
 
 	pipeline = new GL_Pipeline("MyFirstPipeline",vertexShader,fragmentShader);
+	pipeline->addUniformLocation("projectionMatrix");
+	pipeline->addUniformLocation("modelMatrix");
+
+	Mat4* matrix=new Mat4();
+	matrix->setToOrthographicProjection(800, 600, -1.0f, 1.0f);
+
+	Mat4* matrix2 = new Mat4();
+	matrix2->scale(100,100,0);
+	matrix2->rotateZ(90);
+	matrix2->translate(100, 0, 0);
+
+	pipeline->bind();
+	pipeline->loadUniform("projectionMatrix",matrix);
+	pipeline->loadUniform("modelMatrix", matrix2);
+	pipeline->unbind();
 }
 
 void Test_openGLContext::onAppUpdate(AppUpdateEvent* event) {

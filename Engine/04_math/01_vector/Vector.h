@@ -1,9 +1,15 @@
 #pragma once
 
+#define VX v[0]
+#define VY v[1]
+#define VZ v[2]
+#define VW v[3]
+
 /* Includes:
 *  -Parent class
 *  -Objects: Object myObject;
 */
+#include "99_utils/FierceStrings.h"
 
 /* SystemIncludes*/
 #include <cmath>
@@ -22,6 +28,8 @@ public:
 	Vector2f(float value);
 	Vector2f(float x, float y);
 	Vector2f(const Vector2f& vector);
+	Vector2f(float* vector);
+	~Vector2f();
 
 public:
 	float length();
@@ -31,31 +39,41 @@ public:
 
 	void normalize();
 
-	void print();
+	void print(std::string name);
 
 public:
-	float getX() { return m_x; }
-	float getY() { return m_y; }
-	void setX(float x) { m_x = x; }
-	void setY(float y) { m_y = y; }
-	void setTo(const Vector2f& vector) { m_x = vector.m_x; m_y = vector.m_y; }
-	void setTo(float x,float y) { m_x = x; m_y = y; }
+	float* get() { return v; };
+	float getX() { return VX; }
+	float getY() { return VY; }
+	void setX(float x) { VX = x; }
+	void setY(float y) { VY = y; }
+	void setTo(const Vector2f& vector) { VX = vector.VX; VY = vector.VY; }
+	void setTo(float x,float y) { VX = x; VY = y; }
 
 public:
-	friend Vector2f operator+(const Vector2f& v1, const Vector2f& v2);
-	friend Vector2f operator-(const Vector2f& v1, const Vector2f& v2);
-	friend Vector2f operator*(const Vector2f& v1, const float factor);
-	friend Vector2f operator/(const Vector2f& v1, const float factor);
+	Vector2f& operator=(const Vector2f vector);
+	bool operator==(const Vector2f& vector);
+	bool operator!=(const Vector2f& vector);
 
-	friend float operator*(const Vector2f& v1, const Vector2f& v2);
-
-	friend bool operator== (const Vector2f& v1, const Vector2f& v2);
-	friend bool operator!= (const Vector2f& v1, const Vector2f& v2);
+	Vector2f& operator+=(const Vector2f& vector);
+	Vector2f& operator-=(const Vector2f& vector);
+	Vector2f& operator*=(const Vector2f& vector);
+	Vector2f& operator/=(const Vector2f& vector);
+	Vector2f& operator*=(float factor);
+	Vector2f& operator/=(float factor);
 
 private:
-	float m_x;
-	float m_y;
+	float* v;
 };
+
+Vector2f operator+(const Vector2f& v1, const Vector2f& v2);
+Vector2f operator-(const Vector2f& v1, const Vector2f& v2);
+Vector2f operator*(const Vector2f& v1, const Vector2f& v2);
+Vector2f operator/(const Vector2f& v1, const Vector2f& v2);
+
+Vector2f operator*(const Vector2f& vector, float factor);
+Vector2f operator*(float factor, const Vector2f& vector);
+Vector2f operator/(const Vector2f& vector, float factor);
 
 class Vector3f {
 public:
@@ -63,6 +81,8 @@ public:
 	Vector3f(float value);
 	Vector3f(float x, float y, float z);
 	Vector3f(const Vector3f& vector);
+	Vector3f(float* vector);
+	~Vector3f();
 
 public:
 	float length();
@@ -72,37 +92,46 @@ public:
 
 	void normalize();
 
-	void print();
+	void print(std::string name);
 
 public:
 	static Vector3f cross(const Vector3f& v1,const Vector3f& v2);
 
 public:
-	float getX() { return m_x; }
-	float getY() { return m_y; }
-	float getZ() { return m_z; }
-	void setX(float x) { m_x = x; }
-	void setY(float y) { m_y = y; }
-	void setZ(float z) { m_z = z; }
-	void setTo(const Vector3f& vector) { m_x = vector.m_x; m_y = vector.m_y; m_z = vector.m_z; }
-	void setTo(float x, float y, float z) { m_x = x; m_y = y; m_z = z; }
+	float* get() { return v; };
+	float getX() { return VX; }
+	float getY() { return VY; }
+	float getZ() { return VZ; }
+	void setX(float x) { VX = x; }
+	void setY(float y) { VY = y; }
+	void setZ(float z) { VZ = z; }
+	void setTo(const Vector3f& vector) { VX = vector.VX; VY = vector.VY; VZ = vector.VZ; }
+	void setTo(float x, float y, float z) { VX = x; VY = y; VZ = z; }
 
 public:
-	friend Vector3f operator+(const Vector3f& v1, const Vector3f& v2);
-	friend Vector3f operator-(const Vector3f& v1, const Vector3f& v2);
-	friend Vector3f operator*(const Vector3f& v1, const float factor);
-	friend Vector3f operator/(const Vector3f& v1, const float factor);
+	Vector3f& operator=(const Vector3f vector);
+	bool operator==(const Vector3f& vector);
+	bool operator!=(const Vector3f& vector);
 
-	friend float operator*(const Vector3f& v1, const Vector3f& v2);
-
-	friend bool operator== (const Vector3f& v1, const Vector3f& v2);
-	friend bool operator!= (const Vector3f& v1, const Vector3f& v2);
+	Vector3f& operator+=(const Vector3f& vector);
+	Vector3f& operator-=(const Vector3f& vector);
+	Vector3f& operator*=(const Vector3f& vector);
+	Vector3f& operator/=(const Vector3f& vector);
+	Vector3f& operator*=(float factor);
+	Vector3f& operator/=(float factor);
 
 private:
-	float m_x;
-	float m_y;
-	float m_z;
+	float* v;
 };
+
+Vector3f operator+(const Vector3f& v1, const Vector3f& v2);
+Vector3f operator-(const Vector3f& v1, const Vector3f& v2);
+Vector3f operator*(const Vector3f& v1, const Vector3f& v2);
+Vector3f operator/(const Vector3f& v1, const Vector3f& v2);
+
+Vector3f operator*(const Vector3f& vector, float factor);
+Vector3f operator*(float factor, const Vector3f& vector);
+Vector3f operator/(const Vector3f& vector, float factor);
 
 class Vector4f {
 public:
@@ -110,6 +139,8 @@ public:
 	Vector4f(float value);
 	Vector4f(float x, float y, float z, float w);
 	Vector4f(const Vector4f& vector);
+	Vector4f(float* vector);
+	~Vector4f();
 
 public:
 	float length();
@@ -119,34 +150,42 @@ public:
 
 	void normalize();
 
-	void print();
+	void print(std::string name);
 
 public:
-	float getX() { return m_x; }
-	float getY() { return m_y; }
-	float getZ() { return m_z; }
-	float getW() { return m_w; }
-	void setX(float x) { m_x = x; }
-	void setY(float y) { m_y = y; }
-	void setZ(float z) { m_z = z; }
-	void setW(float w) { m_w = w; }
-	void setTo(const Vector4f& vector) { m_x = vector.m_x; m_y = vector.m_y; m_z = vector.m_z; m_w = vector.m_w;}
-	void setTo(float x, float y, float z, float w) { m_x = x; m_y = y; m_z = z; m_w = w; }
+	float* get() { return v; };
+	float getX() { return VX; }
+	float getY() { return VY; }
+	float getZ() { return VZ; }
+	float getW() { return VW; }
+	void setX(float x) { VX = x; }
+	void setY(float y) { VY = y; }
+	void setZ(float z) { VZ = z; }
+	void setW(float w) { VW = w; }
+	void setTo(const Vector4f& vector) { VX = vector.VX; VY = vector.VY; VZ = vector.VZ; VW = vector.VW;}
+	void setTo(float x, float y, float z, float w) { VX = x; VY = y; VZ = z; VW = w; }
 
 public:
-	friend Vector4f operator+(const Vector4f& v1, const Vector4f& v2);
-	friend Vector4f operator-(const Vector4f& v1, const Vector4f& v2);
-	friend Vector4f operator*(const Vector4f& v1, const float factor);
-	friend Vector4f operator/(const Vector4f& v1, const float factor);
+	Vector4f& operator=(const Vector4f vector);
+	bool operator==(const Vector4f& vector);
+	bool operator!=(const Vector4f& vector);
 
-	friend float operator*(const Vector4f& v1, const Vector4f& v2);
-
-	friend bool operator== (const Vector4f& v1, const Vector4f& v2);
-	friend bool operator!= (const Vector4f& v1, const Vector4f& v2);
+	Vector4f& operator+=(const Vector4f& vector);
+	Vector4f& operator-=(const Vector4f& vector);
+	Vector4f& operator*=(const Vector4f& vector);
+	Vector4f& operator/=(const Vector4f& vector);
+	Vector4f& operator*=(float factor);
+	Vector4f& operator/=(float factor);
 
 private:
-	float m_x;
-	float m_y;
-	float m_z;
-	float m_w;
+	float* v;
 };
+
+Vector4f operator+(const Vector4f& v1, const Vector4f& v2);
+Vector4f operator-(const Vector4f& v1, const Vector4f& v2);
+Vector4f operator*(const Vector4f& v1, const Vector4f& v2);
+Vector4f operator/(const Vector4f& v1, const Vector4f& v2);
+
+Vector4f operator*(const Vector4f& vector, float factor);
+Vector4f operator*(float factor, const Vector4f& vector);
+Vector4f operator/(const Vector4f& vector, float factor);

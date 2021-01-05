@@ -18,6 +18,7 @@
 *              Reference& MyFunction(Reference& myReference);
 */
 class GL_Shader;
+class Mat4;
 
 class GL_Pipeline{
 public:
@@ -26,8 +27,20 @@ public:
 
 	void bind();
 	void unbind();
+
+	void addUniformLocation(std::string name);
+	void loadUniform(std::string location, Mat4* matrix);
+
+private:
+	struct UniformLocation {
+		std::string name;
+		GLint location;
+	};
+
 private:
 	GLuint id;
 	std::string m_name;
 	std::vector<GL_Shader*> shaderList;
+
+	std::vector<UniformLocation> uniformLocations;
 };

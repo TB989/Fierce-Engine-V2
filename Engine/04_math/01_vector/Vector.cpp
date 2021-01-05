@@ -2,247 +2,512 @@
 
 #include "02_system/01_logging/Logger.h"
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Vector2f::Vector2f() {
-	m_x = 0.0f;
-	m_y = 0.0f;
+	v = new float[2];
+	VX = 0.0f;
+	VY = 0.0f;
 }
 
 Vector2f::Vector2f(float value) {
-	m_x = value;
-	m_y = value;
+	v = new float[2];
+	VX = value;
+	VY = value;
 }
 
 Vector2f::Vector2f(float x, float y) {
-	m_x = x;
-	m_y = y;
+	v = new float[2];
+	VX = x;
+	VY = y;
 }
 
 Vector2f::Vector2f(const Vector2f& vector){
-	m_x = vector.m_x;
-	m_y = vector.m_y;
+	v = new float[2];
+	VX = vector.VX;
+	VY = vector.VY;
 }
 
+Vector2f::Vector2f(float* vector){
+	v = new float[2];
+	for (int i = 0; i < 2; i++) {
+		v[i] = vector[i];
+	}
+}
+
+Vector2f::~Vector2f(){
+	delete[] v;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 float Vector2f::length() {
-	return std::sqrtf(m_x * m_x + m_y * m_y);
+	return std::sqrtf(VX * VX + VY * VY);
 }
 
 float Vector2f::lengthSquared(){
-	return m_x * m_x + m_y * m_y;
+	return VX * VX + VY * VY;
 }
 
 float Vector2f::distance(const Vector2f& vector){
-	return std::sqrtf((m_x - vector.m_x)*(m_x - vector.m_x) + (m_y - vector.m_y)*(m_y - vector.m_y));
+	return std::sqrtf((VX - vector.VX)*(VX - vector.VX) + (VY - vector.VY)*(VY - vector.VY));
 }
 
 float Vector2f::distanceSquared(const Vector2f& vector){
-	return (m_x - vector.m_x) * (m_x - vector.m_x) + (m_y - vector.m_y) * (m_y - vector.m_y);
+	return (VX - vector.VX) * (VX - vector.VX) + (VY - vector.VY) * (VY - vector.VY);
 }
 
 void Vector2f::normalize() {
 	float l = length();
-	m_x = m_x / l;
-	m_y = m_y / l;
+	VX = VX / l;
+	VY = VY / l;
 }
 
-void Vector2f::print(){
-	Loggers::MATH->info("(%1.3f/%1.3f)",m_x,m_y);
+void Vector2f::print(std::string name){
+	Loggers::MATH->info("[Vector %s]:", name.c_str());
+	Loggers::MATH->info("%1.3f %1.3f",VX,VY);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Vector2f& Vector2f::operator=(const Vector2f vector) {
+	if (this == &vector) {
+		return *this;
+	}
+
+	for (int i = 0; i < 2; i++) {
+		v[i] = vector.v[i];
+	}
+
+	return *this;
 }
 
+bool Vector2f::operator==(const Vector2f& vector) {
+	return
+		VX == vector.VX &&
+		VY == vector.VY;
+}
+
+bool Vector2f::operator!=(const Vector2f& vector) {
+	return !(*this == vector);
+}
+
+Vector2f& Vector2f::operator+=(const Vector2f& vector) {
+	for (int i = 0; i < 2; i++) {
+		v[i] += vector.v[i];
+	}
+	return *this;
+}
+
+Vector2f& Vector2f::operator-=(const Vector2f& vector) {
+	for (int i = 0; i < 2; i++) {
+		v[i] -= vector.v[i];
+	}
+	return *this;
+}
+
+Vector2f& Vector2f::operator*=(const Vector2f& vector) {
+	for (int i = 0; i < 2; i++) {
+		v[i] *= vector.v[i];
+	}
+	return *this;
+}
+
+Vector2f& Vector2f::operator/=(const Vector2f& vector) {
+	for (int i = 0; i < 2; i++) {
+		v[i] /= vector.v[i];
+	}
+	return *this;
+}
+
+Vector2f& Vector2f::operator*=(float factor) {
+	for (int i = 0; i < 2; i++) {
+		v[i] *= factor;
+	}
+	return *this;
+}
+
+Vector2f& Vector2f::operator/=(float factor) {
+	for (int i = 0; i < 2; i++) {
+		v[i] /= factor;
+	}
+	return *this;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Vector2f operator+(const Vector2f& v1, const Vector2f& v2) {
-	return Vector2f(v1.m_x + v2.m_x, v1.m_y + v2.m_y);
+	Vector2f temp(v1);
+	return (temp += v2);
 }
 
 Vector2f operator-(const Vector2f& v1, const Vector2f& v2) {
-	return Vector2f(v1.m_x - v2.m_x, v1.m_y - v2.m_y);
+	Vector2f temp(v1);
+	return (temp -= v2);
 }
 
-Vector2f operator*(const Vector2f& v1, const float factor) {
-	return Vector2f(v1.m_x * factor, v1.m_y * factor);
+Vector2f operator*(const Vector2f& v1, const Vector2f& v2) {
+	Vector2f temp(v1);
+	return (temp *= v2);
 }
 
-Vector2f operator/(const Vector2f& v1, const float factor) {
-	return Vector2f(v1.m_x / factor, v1.m_y / factor);
+Vector2f operator/(const Vector2f& v1, const Vector2f& v2) {
+	Vector2f temp(v1);
+	return (temp /= v2);
 }
 
-float operator*(const Vector2f& v1, const Vector2f& v2) {
-	return v1.m_x * v2.m_x + v1.m_y * v2.m_y;
+Vector2f operator*(const Vector2f& vector, float factor) {
+	Vector2f temp(vector);
+	return (temp *= factor);
 }
 
-bool operator==(const Vector2f& v1, const Vector2f& v2) {
-	return v1.m_x == v2.m_x && v1.m_y == v2.m_y;
+Vector2f operator*(float factor, const Vector2f& vector) {
+	Vector2f temp(vector);
+	return (temp *= factor);
 }
 
-bool operator!=(const Vector2f& v1, const Vector2f& v2) {
-	return !(v1 == v2);
+Vector2f operator/(const Vector2f& vector, float factor) {
+	Vector2f temp(vector);
+	return (temp /= factor);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Vector3f::Vector3f() {
-	m_x = 0.0f;
-	m_y = 0.0f;
-	m_z = 0.0f;
+	v = new float[3];
+	VX = 0.0f;
+	VY = 0.0f;
+	VZ = 0.0f;
 }
 
 Vector3f::Vector3f(float value) {
-	m_x = value;
-	m_y = value;
-	m_z = value;
+	v = new float[3];
+	VX = value;
+	VY = value;
+	VZ = value;
 }
 
 Vector3f::Vector3f(float x, float y, float z) {
-	m_x = x;
-	m_y = y;
-	m_z = z;
+	v = new float[3];
+	VX = x;
+	VY = y;
+	VZ = z;
 }
 
 Vector3f::Vector3f(const Vector3f& vector){
-	m_x = vector.m_x;
-	m_y = vector.m_y;
-	m_z = vector.m_z;
+	v = new float[3];
+	VX = vector.VX;
+	VY = vector.VY;
+	VZ = vector.VZ;
 }
 
+Vector3f::Vector3f(float* vector){
+	v = new float[3];
+	for (int i = 0; i < 3; i++) {
+		v[i] = vector[i];
+	}
+}
+
+Vector3f::~Vector3f(){
+	delete[] v;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 float Vector3f::length() {
-	return std::sqrtf(m_x * m_x + m_y * m_y + m_z * m_z);
+	return std::sqrtf(VX * VX + VY * VY + VZ * VZ);
 }
 
 float Vector3f::lengthSquared(){
-	return m_x * m_x + m_y * m_y + m_z * m_z;
+	return VX * VX + VY * VY + VZ * VZ;
 }
 
 float Vector3f::distance(const Vector3f& vector){
-	return std::sqrtf((m_x - vector.m_x) * (m_x - vector.m_x) + (m_y - vector.m_y) * (m_y - vector.m_y)+ (m_z - vector.m_z) * (m_z - vector.m_z));
+	return std::sqrtf((VX - vector.VX) * (VX - vector.VX) + (VY - vector.VY) * (VY - vector.VY)+ (VZ - vector.VZ) * (VZ - vector.VZ));
 }
 
 float Vector3f::distanceSquared(const Vector3f& vector){
-	return (m_x - vector.m_x) * (m_x - vector.m_x) + (m_y - vector.m_y) * (m_y - vector.m_y) + (m_z - vector.m_z) * (m_z - vector.m_z);
+	return (VX - vector.VX) * (VX - vector.VX) + (VY - vector.VY) * (VY - vector.VY) + (VZ - vector.VZ) * (VZ - vector.VZ);
 }
 
 void Vector3f::normalize() {
 	float l = length();
-	m_x = m_x / l;
-	m_y = m_y / l;
-	m_z = m_z / l;
+	VX = VX / l;
+	VY = VY / l;
+	VZ = VZ / l;
 }
 
-void Vector3f::print(){
-	Loggers::MATH->info("(%1.3f/%1.3f/%1.3f)", m_x, m_y,m_z);
+void Vector3f::print(std::string name){
+	Loggers::MATH->info("[Vector %s]:", name.c_str());
+	Loggers::MATH->info("%1.3f %1.3f %1.3f", VX, VY, VZ);
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Vector3f Vector3f::cross(const Vector3f& v1, const Vector3f& v2){
 	return Vector3f(
-		v1.m_y * v2.m_z - v1.m_z * v2.m_y,
-		v1.m_z * v2.m_x - v1.m_x * v2.m_z,
-		v1.m_x * v2.m_y - v1.m_y * v2.m_x
+		v1.VY * v2.VZ - v1.VZ * v2.VY,
+		v1.VZ * v2.VX - v1.VX * v2.VZ,
+		v1.VX * v2.VY - v1.VY * v2.VX
 		);
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Vector3f& Vector3f::operator=(const Vector3f vector) {
+	if (this == &vector) {
+		return *this;
+	}
 
+	for (int i = 0; i < 3; i++) {
+		v[i] = vector.v[i];
+	}
+
+	return *this;
+}
+
+bool Vector3f::operator==(const Vector3f& vector) {
+	return
+		VX == vector.VX &&
+		VY == vector.VY &&
+		VZ == vector.VZ;
+}
+
+bool Vector3f::operator!=(const Vector3f& vector) {
+	return !(*this == vector);
+}
+
+Vector3f& Vector3f::operator+=(const Vector3f& vector) {
+	for (int i = 0; i < 3; i++) {
+		v[i] += vector.v[i];
+	}
+	return *this;
+}
+
+Vector3f& Vector3f::operator-=(const Vector3f& vector) {
+	for (int i = 0; i < 3; i++) {
+		v[i] -= vector.v[i];
+	}
+	return *this;
+}
+
+Vector3f& Vector3f::operator*=(const Vector3f& vector) {
+	for (int i = 0; i < 3; i++) {
+		v[i] *= vector.v[i];
+	}
+	return *this;
+}
+
+Vector3f& Vector3f::operator/=(const Vector3f& vector) {
+	for (int i = 0; i < 3; i++) {
+		v[i] /= vector.v[i];
+	}
+	return *this;
+}
+
+Vector3f& Vector3f::operator*=(float factor) {
+	for (int i = 0; i < 3; i++) {
+		v[i] *= factor;
+	}
+	return *this;
+}
+
+Vector3f& Vector3f::operator/=(float factor) {
+	for (int i = 0; i < 3; i++) {
+		v[i] /= factor;
+	}
+	return *this;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Vector3f operator+(const Vector3f& v1, const Vector3f& v2) {
-	return Vector3f(v1.m_x + v2.m_x, v1.m_y + v2.m_y, v1.m_z + v2.m_z);
+	Vector3f temp(v1);
+	return (temp += v2);
 }
 
 Vector3f operator-(const Vector3f& v1, const Vector3f& v2) {
-	return Vector3f(v1.m_x - v2.m_x, v1.m_y - v2.m_y, v1.m_z - v2.m_z);
+	Vector3f temp(v1);
+	return (temp -= v2);
 }
 
-Vector3f operator*(const Vector3f& v1, const float factor) {
-	return Vector3f(v1.m_x * factor, v1.m_y * factor, v1.m_z * factor);
+Vector3f operator*(const Vector3f& v1, const Vector3f& v2) {
+	Vector3f temp(v1);
+	return (temp *= v2);
 }
 
-Vector3f operator/(const Vector3f& v1, const float factor) {
-	return Vector3f(v1.m_x / factor, v1.m_y / factor, v1.m_z / factor);
+Vector3f operator/(const Vector3f& v1, const Vector3f& v2) {
+	Vector3f temp(v1);
+	return (temp /= v2);
 }
 
-float operator*(const Vector3f& v1, const Vector3f& v2) {
-	return v1.m_x * v2.m_x + v1.m_y * v2.m_y + v1.m_z * v2.m_z;
+Vector3f operator*(const Vector3f& vector, float factor) {
+	Vector3f temp(vector);
+	return (temp *= factor);
 }
 
-bool operator==(const Vector3f& v1, const Vector3f& v2) {
-	return v1.m_x == v2.m_x && v1.m_y == v2.m_y && v1.m_z == v2.m_z;
+Vector3f operator*(float factor, const Vector3f& vector) {
+	Vector3f temp(vector);
+	return (temp *= factor);
 }
 
-bool operator!=(const Vector3f& v1, const Vector3f& v2) {
-	return !(v1 == v2);
+Vector3f operator/(const Vector3f& vector, float factor) {
+	Vector3f temp(vector);
+	return (temp /= factor);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Vector4f::Vector4f() {
-	m_x = 0.0f;
-	m_y = 0.0f;
-	m_z = 0.0f;
-	m_w = 0.0f;
+	v = new float[4];
+	VX = 0.0f;
+	VY = 0.0f;
+	VZ = 0.0f;
+	VW = 0.0f;
 }
 
 Vector4f::Vector4f(float value) {
-	m_x = value;
-	m_y = value;
-	m_z = value;
-	m_w = value;
+	v = new float[4];
+	VX = value;
+	VY = value;
+	VZ = value;
+	VW = value;
 }
 
 Vector4f::Vector4f(float x, float y, float z, float w) {
-	m_x = x;
-	m_y = y;
-	m_z = z;
-	m_w = w;
+	v = new float[4];
+	VX = x;
+	VY = y;
+	VZ = z;
+	VW = w;
 }
 
 Vector4f::Vector4f(const Vector4f& vector){
-	m_x = vector.m_x;
-	m_y = vector.m_y;
-	m_z = vector.m_z;
-	m_w = vector.m_w;
+	v = new float[4];
+	VX = vector.VX;
+	VY = vector.VY;
+	VZ = vector.VZ;
+	VW = vector.VW;
 }
 
+Vector4f::Vector4f(float* vector){
+	v = new float[4];
+	for (int i = 0; i < 4; i++) {
+		v[i] = vector[i];
+	}
+}
+
+Vector4f::~Vector4f(){
+	delete[] v;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 float Vector4f::length() {
-	return std::sqrtf(m_x * m_x + m_y * m_y + m_z * m_z + m_w * m_w);
+	return std::sqrtf(VX * VX + VY * VY + VZ * VZ + VW * VW);
 }
 
 float Vector4f::lengthSquared(){
-	return m_x * m_x + m_y * m_y + m_z * m_z + m_w * m_w;
+	return VX * VX + VY * VY + VZ * VZ + VW * VW;
 }
 
 float Vector4f::distance(const Vector4f& vector){
-	return std::sqrtf((m_x - vector.m_x) * (m_x - vector.m_x) + (m_y - vector.m_y) * (m_y - vector.m_y) + (m_z - vector.m_z) * (m_z - vector.m_z) + (m_w - vector.m_w) * (m_w - vector.m_w));
+	return std::sqrtf((VX - vector.VX) * (VX - vector.VX) + (VY - vector.VY) * (VY - vector.VY) + (VZ - vector.VZ) * (VZ - vector.VZ) + (VW - vector.VW) * (VW - vector.VW));
 }
 
 float Vector4f::distanceSquared(const Vector4f& vector){
-	return (m_x - vector.m_x) * (m_x - vector.m_x) + (m_y - vector.m_y) * (m_y - vector.m_y) + (m_z - vector.m_z) * (m_z - vector.m_z) + (m_w - vector.m_w) * (m_w - vector.m_w);
+	return (VX - vector.VX) * (VX - vector.VX) + (VY - vector.VY) * (VY - vector.VY) + (VZ - vector.VZ) * (VZ - vector.VZ) + (VW - vector.VW) * (VW - vector.VW);
 }
 
 void Vector4f::normalize() {
 	float l = length();
-	m_x = m_x / l;
-	m_y = m_y / l;
-	m_z = m_z / l;
-	m_w = m_w / l;
+	VX = VX / l;
+	VY = VY / l;
+	VZ = VZ / l;
+	VW = VW / l;
 }
 
-void Vector4f::print(){
-	Loggers::MATH->info("(%1.3f/%1.3f/%1.3f/%1.3f)", m_x, m_y, m_z,m_w);
+void Vector4f::print(std::string name){
+	Loggers::MATH->info("[Vector %s]:", name.c_str());
+	Loggers::MATH->info("%1.3f %1.3f %1.3f %1.3f", VX, VY, VZ, VW);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Vector4f& Vector4f::operator=(const Vector4f vector) {
+	if (this == &vector) {
+		return *this;
+	}
+
+	for (int i = 0; i < 4; i++) {
+		v[i] = vector.v[i];
+	}
+
+	return *this;
 }
 
+bool Vector4f::operator==(const Vector4f& vector) {
+	return
+		VX == vector.VX &&
+		VY == vector.VY &&
+		VZ == vector.VZ &&
+		VW == vector.VW;
+}
+
+bool Vector4f::operator!=(const Vector4f& vector) {
+	return !(*this == vector);
+}
+
+Vector4f& Vector4f::operator+=(const Vector4f& vector) {
+	for (int i = 0; i < 4; i++) {
+		v[i] += vector.v[i];
+	}
+	return *this;
+}
+
+Vector4f& Vector4f::operator-=(const Vector4f& vector) {
+	for (int i = 0; i < 4; i++) {
+		v[i] -= vector.v[i];
+	}
+	return *this;
+}
+
+Vector4f& Vector4f::operator*=(const Vector4f& vector) {
+	for (int i = 0; i < 4; i++) {
+		v[i] *= vector.v[i];
+	}
+	return *this;
+}
+
+Vector4f& Vector4f::operator/=(const Vector4f& vector) {
+	for (int i = 0; i < 4; i++) {
+		v[i] /= vector.v[i];
+	}
+	return *this;
+}
+
+Vector4f& Vector4f::operator*=(float factor) {
+	for (int i = 0; i < 4; i++) {
+		v[i] *= factor;
+	}
+	return *this;
+}
+
+Vector4f& Vector4f::operator/=(float factor) {
+	for (int i = 0; i < 4; i++) {
+		v[i] /= factor;
+	}
+	return *this;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Vector4f operator+(const Vector4f& v1, const Vector4f& v2) {
-	return Vector4f(v1.m_x + v2.m_x, v1.m_y + v2.m_y, v1.m_z + v2.m_z, v1.m_w + v2.m_w);
+	Vector4f temp(v1);
+	return (temp += v2);
 }
 
 Vector4f operator-(const Vector4f& v1, const Vector4f& v2) {
-	return Vector4f(v1.m_x - v2.m_x, v1.m_y - v2.m_y, v1.m_z - v2.m_z, v1.m_w - v2.m_w);
+	Vector4f temp(v1);
+	return (temp -= v2);
 }
 
-Vector4f operator*(const Vector4f& v1, const float factor) {
-	return Vector4f(v1.m_x * factor, v1.m_y * factor, v1.m_z * factor, v1.m_w * factor);
+Vector4f operator*(const Vector4f& v1, const Vector4f& v2) {
+	Vector4f temp(v1);
+	return (temp *= v2);
 }
 
-Vector4f operator/(const Vector4f& v1, const float factor) {
-	return Vector4f(v1.m_x / factor, v1.m_y / factor, v1.m_z / factor, v1.m_w / factor);
+Vector4f operator/(const Vector4f& v1, const Vector4f& v2) {
+	Vector4f temp(v1);
+	return (temp /= v2);
 }
 
-float operator*(const Vector4f& v1, const Vector4f& v2) {
-	return v1.m_x * v2.m_x + v1.m_y * v2.m_y + v1.m_z * v2.m_z + v1.m_w * v2.m_w;
+Vector4f operator*(const Vector4f& vector, float factor) {
+	Vector4f temp(vector);
+	return (temp *= factor);
 }
 
-bool operator==(const Vector4f& v1, const Vector4f& v2) {
-	return v1.m_x == v2.m_x && v1.m_y == v2.m_y && v1.m_z == v2.m_z && v1.m_w == v2.m_w;
+Vector4f operator*(float factor, const Vector4f& vector) {
+	Vector4f temp(vector);
+	return (temp *= factor);
 }
 
-bool operator!=(const Vector4f& v1, const Vector4f& v2) {
-	return !(v1 == v2);
+Vector4f operator/(const Vector4f& vector, float factor) {
+	Vector4f temp(vector);
+	return (temp /= factor);
 }
