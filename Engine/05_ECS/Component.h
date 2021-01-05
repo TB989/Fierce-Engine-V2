@@ -4,7 +4,8 @@
 *  -Parent class
 *  -Objects: Object myObject;
 */
-#include "02_system/04_render/GL/GL_Shader.h"
+
+#include "02_system/04_render/GL/GL_VAO.h"
 
 /* SystemIncludes*/
 
@@ -16,7 +17,19 @@
 *              Reference& MyFunction(Reference& myReference);
 */
 
-class GL_Shader_Color : public GL_Shader{
+class Component{};
+
+class ComponentMesh : public Component {
+private:
+	GL_VAO* m_vao;
 public:
-	GL_Shader_Color(std::string path) :GL_Shader(path) {};
+	ComponentMesh(GL_VAO* vao) {
+		m_vao = vao;
+	}
+
+	void render() {
+		m_vao->bind();
+		m_vao->draw();
+		m_vao->unbind();
+	}
 };

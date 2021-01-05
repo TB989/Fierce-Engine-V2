@@ -5,80 +5,50 @@
 #include "02_system/01_logging/Logger.h"
 #include "02_system/02_event/EventSystem.h"
 #include "02_system/03_window/WindowSystem.h"
+#include "02_system/04_render/GL_RenderSystem.h"
 #include "02_system/04_render/GL/GL_Context.h"
 #include "02_system/04_render/GL/GL_Shader.h"
 #include "02_system/04_render/GL/GL_Pipeline.h"
 #include "02_system/04_render/GL/GL_VBO.h"
 #include "02_system/04_render/GL/GL_VAO.h"
 #include "02_system/04_render/GL/Fierce_GL.h"
-#include "02_system/04_render/GL_Shader_Color.h"
 #include "04_math/02_matrix/Matrix.h"
+#include "04_math/03_transform/Transform.h"
 #include "03_io/parser/Parser.h"
+#include "05_ECS/Entity.h"
+#include "05_ECS/Component.h"
 
 Test_openGLContext::Test_openGLContext() {
 	eventSystem->addListener(this, &Test_openGLContext::onAppInit);
-	eventSystem->addListener(this, &Test_openGLContext::onAppUpdate);
 	eventSystem->addListener(this, &Test_openGLContext::onAppCleanUp);
 
 	eventSystem->addListener(this, &Test_openGLContext::onWindowResize);
 }
 
 void Test_openGLContext::onAppInit(AppInitEvent* event) {
-	context = new GL_Context(this);
 
 	static const GLfloat g_vertex_buffer_data[] = {
-	   -1.0f, -1.0f, 0.0f,
-	   1.0f, -1.0f, 0.0f,
-	   0.0f,  1.0f, 0.0f,
+		   -1.0f, -1.0f, 0.0f,
+		   1.0f, -1.0f, 0.0f,
+		   0.0f,  1.0f, 0.0f,
 	};
 
-	vbo = new GL_VBO(GL_ARRAY_BUFFER);
+	GL_VBO* vbo = new GL_VBO(GL_ARRAY_BUFFER);
 	vbo->loadData(sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-	vao = new GL_VAO(vbo);
+	GL_VAO* vao = new GL_VAO(vbo);
 	vao->vertexAttribPointer(0, 3, GL_FLOAT);
 
-	vertexShader=new GL_Shader_Color("MyFirstShader.vs");
-	fragmentShader=new GL_Shader_Color("MyFirstShader.fs");
-
-	pipeline = new GL_Pipeline("MyFirstPipeline",vertexShader,fragmentShader);
-	pipeline->addUniformLocation("projectionMatrix");
-	pipeline->addUniformLocation("modelMatrix");
-
-	Mat4* matrix=new Mat4();
-	matrix->setToOrthographicProjection(800, 600, -1.0f, 1.0f);
-
-	Mat4* matrix2 = new Mat4();
-	matrix2->scale(100,100,0);
-	matrix2->rotateZ(90);
-	matrix2->translate(100, 0, 0);
-
-	pipeline->bind();
-	pipeline->loadUniform("projectionMatrix",matrix);
-	pipeline->loadUniform("modelMatrix", matrix2);
-	pipeline->unbind();
-}
-
-void Test_openGLContext::onAppUpdate(AppUpdateEvent* event) {
-	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	pipeline->bind();
-	vao->bind();
-	vao->draw();
-	vao->unbind();
-	pipeline->unbind();
-
-	context->swapBuffers();
+	entity = new Entity2D("Test");
+	entity->setTransform(new Transform2D(100,0,100,100,30));
+	entity->addComponent(new ComponentMesh(vao));
+	renderSystem->addEntity(entity);
 }
 
 void Test_openGLContext::onAppCleanUp(AppCleanUpEvent* event) {
-	delete pipeline;
-	delete vertexShader;
-	delete fragmentShader;
+	delete entity;
 	delete vao;
 	delete vbo;
-	delete context;
 }
 
 void Test_openGLContext::onWindowResize(WindowResizeEvent* event) {

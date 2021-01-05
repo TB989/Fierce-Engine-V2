@@ -5,6 +5,7 @@
 #include "02_system/02_event/Event.h"
 #include "02_system/03_window/WindowSystem.h"
 #include "02_system/03_window/FierceWindow.h"
+#include "02_system/04_render/GL_RenderSystem.h"
 #include "03_io/parser/Parser.h"
 
 Core::Core() {
@@ -19,6 +20,9 @@ Core::Core() {
 
 Core::~Core() {
 	if (m_settings.windowMode != HEADLESS) {
+		Loggers::CORE->info("Stopping render system.");
+		delete renderSystem;
+
 		Loggers::CORE->info("Stopping window system.");
 		delete windowSystem;
 	}
@@ -39,6 +43,7 @@ void Core::run() {
 	while (running) {
 		m_window->pollEvents();
 		coreUpdate();
+		renderSystem->render();
 		coreRender();
 	}
 	coreCleanUp();
@@ -49,6 +54,9 @@ void Core::coreInit() {
 		Loggers::CORE->info("Starting window system.");
 		windowSystem = new WindowSystem(this, &m_settings);
 		m_window = windowSystem->createWindow();
+
+		Loggers::CORE->info("Starting render system.");
+		renderSystem = new GL_RenderSystem(this, &m_settings);
 	}
 
 	Loggers::CORE->info("Starting engine.");

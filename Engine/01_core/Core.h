@@ -17,6 +17,7 @@
 */
 class EventSystem;
 class WindowSystem;
+class GL_RenderSystem;
 class FierceWindow;
 struct WindowCloseEvent;
 
@@ -36,6 +37,7 @@ public:
 	EngineSettings m_settings;
 	EventSystem* eventSystem=nullptr;
 	WindowSystem* windowSystem=nullptr;
+	GL_RenderSystem* renderSystem = nullptr;
 
 private:
 	bool running = false;

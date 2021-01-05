@@ -17,10 +17,11 @@
 *              Reference& MyFunction(Reference& myReference);
 */
 class GL_Context;
-class GL_Shader_Color;
+class GL_Shader;
 class GL_Pipeline;
 class GL_VBO;
 class GL_VAO;
+class Entity2D;
 
 class Test_logging : public Core {
 
@@ -50,17 +51,14 @@ class Test_openGLContext : public Core {
 public:
 	Test_openGLContext();
 	void onAppInit(AppInitEvent* event);
-	void onAppUpdate(AppUpdateEvent* event);
 	void onAppCleanUp(AppCleanUpEvent* event);
 
 	void onWindowResize(WindowResizeEvent* event);
 private:
-	GL_Context* context=nullptr;
 	GL_VBO* vbo=nullptr;
 	GL_VAO* vao=nullptr;
-	GL_Shader_Color* vertexShader=nullptr;
-	GL_Shader_Color* fragmentShader=nullptr;
-	GL_Pipeline* pipeline=nullptr;
+
+	Entity2D* entity=nullptr;
 };
 
 class Test_math : public Core {
