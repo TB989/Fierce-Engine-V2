@@ -76,8 +76,7 @@ void GL_RenderSystem::loadShaders(){
 
 void GL_RenderSystem::loadPipelines(){
 	GL_Pipeline* pipeline = new GL_Pipeline("MyFirstPipeline", shaders["MyFirstShader.vs"], shaders["MyFirstShader.fs"]);
-	pipeline->addVertexAttribute(VertexAttribute::POS3);
-	pipeline->addVertexAttribute(VertexAttribute::COLOR);
+	pipeline->addVertexAttribute(VertexAttribute::POS2);
 	pipeline->addUniformLocation("projectionMatrix");
 	pipeline->addUniformLocation("modelMatrix");
 	pipeline->create();

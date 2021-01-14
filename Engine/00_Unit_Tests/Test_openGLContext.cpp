@@ -20,6 +20,8 @@
 
 #include "02_system/04_render/GL/VertexAttribute.h"
 
+#include "06_Geometry/GeometryLoader.h"
+
 Test_openGLContext::Test_openGLContext() {
 	eventSystem->addListener(this, &Test_openGLContext::onAppInit);
 	eventSystem->addListener(this, &Test_openGLContext::onAppCleanUp);
@@ -29,27 +31,21 @@ Test_openGLContext::Test_openGLContext() {
 
 void Test_openGLContext::onAppInit(AppInitEvent* event) {
 
-	static const GLfloat g_vertex_buffer_data[] = {
-		0.0f, 0.0f, 0.0f,   1.0f,0.0f,0.0f,
-		0.0f, 1.0f, 0.0f,   0.0f,1.0f,0.0f,
-		1.0f, 1.0f, 0.0f,   0.0f,0.0f,1.0f,
-		1.0f, 0.0f, 0.0f,   0.0f,0.0f,0.0f
-	};
+	GeometryLoader* loader = new GeometryLoader();
+	loader->registerGeometry(GeometryType::RECTANGLE, new Rectangle2D());
 
-	static const GLuint g_index_buffer_data[] = {
-		0,1,2,
-		0,2,3
-	};
+	std::vector<float> vertices;
+	std::vector<unsigned int> indices;
+	loader->loadGeometry(new ComponentGeometry(GeometryType::RECTANGLE,0,0.0f,0.0f),vertices,indices);
 
 	GL_VBO* vbo = new GL_VBO(GL_ARRAY_BUFFER);
-	vbo->loadData(sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+	vbo->loadData(sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
 
 	GL_VBO* vboi = new GL_VBO(GL_ELEMENT_ARRAY_BUFFER);
-	vboi->loadData(sizeof(g_index_buffer_data), g_index_buffer_data, GL_STATIC_DRAW);
+	vboi->loadData(sizeof(indices), indices.data(), GL_STATIC_DRAW);
 
 	GL_VAO* vao = new GL_VAO(vbo,vboi);
-	vao->addVertexAttribute(VertexAttribute::POS3);
-	vao->addVertexAttribute(VertexAttribute::COLOR);
+	vao->addVertexAttribute(VertexAttribute::POS2);
 
 	entity = new Entity2D("Test");
 	entity->setTransform(new Transform2D(5,5,500,500,0));

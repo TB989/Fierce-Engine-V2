@@ -37,19 +37,20 @@ public:
 
 class ComponentGeometry :public Component {
 public:
-	ComponentGeometry(GeometryType type,int numPoints,float radius,float angle,float innerRadius) {
+	ComponentGeometry(GeometryType type,int numPoints,float angle,float innerRadius) {
 		m_type = type;
 		m_numPoints = numPoints;
-		m_radius = radius;
 		m_angle = angle;
 		m_innerRadius = innerRadius;
 	}
 
 	GeometryType getType() { return m_type; }
+	int getNumPoints() { return m_numPoints; }
+	float getAngle() { return m_angle; }
+	float getInnerRadius() { return m_innerRadius; }
 private :
 	GeometryType m_type;
 	int m_numPoints;
-	float m_radius;
 	float m_angle;
 	float m_innerRadius;
 };

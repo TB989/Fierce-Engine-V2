@@ -1,14 +1,10 @@
 #version 430 core
 
-in vec3 position;
-in vec3 color;
+in vec2 position;
 
 uniform mat4 modelMatrix;
 uniform mat4 projectionMatrix;
 
-out vec3 color_vs;
-
 void main() {
-	gl_Position=projectionMatrix*modelMatrix*vec4(position,1.0);
-	color_vs=color;
+	gl_Position=projectionMatrix*modelMatrix*vec4(position,0.0,1.0);
 }
