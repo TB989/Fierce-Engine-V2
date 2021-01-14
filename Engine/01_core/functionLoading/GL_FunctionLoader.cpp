@@ -40,6 +40,7 @@ PFNGLUSEPROGRAMPROC glUseProgram;
 PFNGLGETPROGRAMIVPROC glGetProgramiv;
 PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
 
+PFNGLBINDATTRIBLOCATIONPROC glBindAttribLocation;
 PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
 PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
 //*************************************************
@@ -84,6 +85,7 @@ void loadAllGLFunctions() {
 	glGetProgramiv = (PFNGLGETPROGRAMIVPROC)getGLFunctionPointer("glGetProgramiv");
 	glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)getGLFunctionPointer("glGetProgramInfoLog");
 
+	glBindAttribLocation = (PFNGLBINDATTRIBLOCATIONPROC)getGLFunctionPointer("glBindAttribLocation");
 	glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)getGLFunctionPointer("glGetUniformLocation");
 	glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)getGLFunctionPointer("glUniformMatrix4fv");
 }

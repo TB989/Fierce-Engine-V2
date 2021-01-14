@@ -18,6 +18,7 @@ void GL_VBO::unbind(){
 }
 
 void GL_VBO::loadData(GLsizeiptr size,const void *data,GLenum usage){
+	m_size = size;
 	glBindBuffer(m_type, m_id);
 	glBufferData(m_type, size, data, usage);
 	glBindBuffer(m_type, 0);

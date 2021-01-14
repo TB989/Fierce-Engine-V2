@@ -6,6 +6,7 @@
 */
 
 #include "02_system/04_render/GL/GL_VAO.h"
+#include "06_Geometry/Geometry2D.h"
 
 /* SystemIncludes*/
 
@@ -32,4 +33,23 @@ public:
 		m_vao->draw();
 		m_vao->unbind();
 	}
+};
+
+class ComponentGeometry :public Component {
+public:
+	ComponentGeometry(GeometryType type,int numPoints,float radius,float angle,float innerRadius) {
+		m_type = type;
+		m_numPoints = numPoints;
+		m_radius = radius;
+		m_angle = angle;
+		m_innerRadius = innerRadius;
+	}
+
+	GeometryType getType() { return m_type; }
+private :
+	GeometryType m_type;
+	int m_numPoints;
+	float m_radius;
+	float m_angle;
+	float m_innerRadius;
 };

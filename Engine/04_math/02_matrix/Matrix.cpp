@@ -229,12 +229,12 @@ void Mat4::setToOrthographicProjection(float width, float height, float n, float
 	M00 = 1.0f / width;
 	M10 = 0;
 	M20 = 0;
-	M30 = 0;
+	M30 = -1.0f;
 
 	M01 = 0;
-	M11 = 1.0f / height;
+	M11 = -1.0f / height;
 	M21 = 0;
-	M31 = 0;
+	M31 = 1.0f;
 
 	M02 = 0;
 	M12 = 0;

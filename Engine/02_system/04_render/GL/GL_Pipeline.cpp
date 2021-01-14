@@ -2,6 +2,7 @@
 
 #include "02_system/01_logging/Logger.h"
 #include "02_system/04_render/GL/GL_Shader.h"
+#include "02_system/04_render/GL/VertexAttribute.h"
 #include "04_math/02_matrix/Matrix.h"
 
 GL_Pipeline::GL_Pipeline(std::string name,GL_Shader* shader1,GL_Shader* shader2){
@@ -13,6 +14,21 @@ GL_Pipeline::GL_Pipeline(std::string name,GL_Shader* shader1,GL_Shader* shader2)
 	glAttachShader(id, shader1->getId());
 	shaderList.push_back(shader2);
 	glAttachShader(id, shader2->getId());
+}
+
+GL_Pipeline::~GL_Pipeline(){
+	glUseProgram(0);
+	for (int i = 0;i<shaderList.size();i++) {
+		glDetachShader(id, shaderList[i]->getId());
+	}
+	glDeleteProgram(id);
+}
+
+void GL_Pipeline::create(){
+	//Set vertex attributes
+	for (VertexAttribute* attrib:vertexAttributes) {
+		glBindAttribLocation(id, attrib->getLocation(), attrib->getName().c_str());
+	}
 
 	//Link program
 	glLinkProgram(id);
@@ -41,14 +57,17 @@ GL_Pipeline::GL_Pipeline(std::string name,GL_Shader* shader1,GL_Shader* shader2)
 		glGetProgramInfoLog(id, InfoLogLength, NULL, &ProgramErrorMessage[0]);
 		Loggers::GL->error("Shader program validation failed for program %s:\n%s\n", m_name.c_str(), &ProgramErrorMessage[0]);
 	}
-}
 
-GL_Pipeline::~GL_Pipeline(){
-	glUseProgram(0);
-	for (int i = 0;i<shaderList.size();i++) {
-		glDetachShader(id, shaderList[i]->getId());
+	//Get uniform locations
+	for (UniformLocation* loc : uniformLocations) {
+		GLint location = glGetUniformLocation(id, loc->name.c_str());
+		if (location == -1) {
+			Loggers::GL->warn("Uniform location %s is not found in shader.", loc->name.c_str());
+		}
+		else {
+			loc->location = location;
+		}
 	}
-	glDeleteProgram(id);
 }
 
 void GL_Pipeline::bind(){
@@ -60,25 +79,25 @@ void GL_Pipeline::unbind(){
 }
 
 void GL_Pipeline::addUniformLocation(std::string name){
-	GLint location=glGetUniformLocation(id, name.c_str());
-	if (location==-1) {
-		Loggers::GL->warn("Uniform location %s is not found in shader.", name.c_str());
-	}
-	else {
-		UniformLocation loc = {name,location};
-		uniformLocations.push_back(loc);
-	}
+	UniformLocation* loc = new UniformLocation();
+	loc->name = name;
+	loc->location = -1;
+	uniformLocations.push_back(loc);
 }
 
-void GL_Pipeline::loadUniform(std::string location, Mat4* matrix){
+void GL_Pipeline::loadUniform(std::string name, Mat4* matrix){
 	GLint load = -1;
-	for (const UniformLocation loc : uniformLocations) {
-		if (loc.name.compare(location) == 0) {
-			load = loc.location;
+	for (const UniformLocation* loc : uniformLocations) {
+		if (loc->name.compare(name) == 0) {
+			load = loc->location;
 			glUniformMatrix4fv(load, 1, GL_TRUE, matrix->get());
 			return;
 		}
 	}
 
-	Loggers::GL->warn("Uniform location %s is not found in shader.", location.c_str());
+	Loggers::GL->warn("Uniform location %s is not found in shader.", name.c_str());
+}
+
+void GL_Pipeline::addVertexAttribute(VertexAttribute* attribute){
+	vertexAttributes.push_back(attribute);
 }

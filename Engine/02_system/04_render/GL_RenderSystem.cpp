@@ -6,6 +6,7 @@
 #include "02_system/04_render/GL/GL_Pipeline.h"
 #include "02_system/04_render/GL/GL_VAO.h"
 #include "02_system/04_render/GL/GL_VBO.h"
+#include "02_system/04_render/GL/VertexAttribute.h"
 #include "04_math/02_matrix/Matrix.h"
 #include "04_math/03_transform/Transform.h"
 #include "05_ECS/Entity.h"
@@ -75,8 +76,11 @@ void GL_RenderSystem::loadShaders(){
 
 void GL_RenderSystem::loadPipelines(){
 	GL_Pipeline* pipeline = new GL_Pipeline("MyFirstPipeline", shaders["MyFirstShader.vs"], shaders["MyFirstShader.fs"]);
+	pipeline->addVertexAttribute(VertexAttribute::POS3);
+	pipeline->addVertexAttribute(VertexAttribute::COLOR);
 	pipeline->addUniformLocation("projectionMatrix");
 	pipeline->addUniformLocation("modelMatrix");
+	pipeline->create();
 	pipeline->bind();
 	pipeline->loadUniform("projectionMatrix", orthographicProjectionMatrix);
 	pipeline->unbind();
