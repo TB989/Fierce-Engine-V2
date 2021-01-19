@@ -33,16 +33,19 @@ void Test_openGLContext::onAppInit(AppInitEvent* event) {
 
 	GeometryLoader* loader = new GeometryLoader();
 	loader->registerGeometry(GeometryType::RECTANGLE, new Rectangle2D());
+	loader->registerGeometry(GeometryType::CIRCLE, new Circle2D());
+	loader->registerGeometry(GeometryType::CIRCLE_RING, new CircleRing2D());
+	loader->registerGeometry(GeometryType::TRIANGLE, new Triangle2D());
 
-	std::vector<float> vertices;
-	std::vector<unsigned int> indices;
-	loader->loadGeometry(new ComponentGeometry(GeometryType::RECTANGLE,0,0.0f,0.0f),vertices,indices);
+	std::vector<GLfloat> vertices;
+	std::vector<GLuint> indices;
+	loader->loadGeometry(new ComponentGeometry(GeometryType::TRIANGLE,32,360.0f,0.25f),vertices,indices);
 
 	GL_VBO* vbo = new GL_VBO(GL_ARRAY_BUFFER);
-	vbo->loadData(sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
+	vbo->loadData(sizeof(GLfloat)*vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
 	GL_VBO* vboi = new GL_VBO(GL_ELEMENT_ARRAY_BUFFER);
-	vboi->loadData(sizeof(indices), indices.data(), GL_STATIC_DRAW);
+	vboi->loadData(sizeof(GLuint)*indices.size(), indices.data(), GL_STATIC_DRAW);
 
 	GL_VAO* vao = new GL_VAO(vbo,vboi);
 	vao->addVertexAttribute(VertexAttribute::POS2);

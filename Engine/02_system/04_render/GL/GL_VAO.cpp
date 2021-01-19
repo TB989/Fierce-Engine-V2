@@ -3,17 +3,19 @@
 #include "GL_VBO.h"
 #include "VertexAttribute.h"
 
+#include "02_system/01_logging/Logger.h"
+
 GL_VAO::GL_VAO(GL_VBO* vertexBuffer){
 	glGenVertexArrays(1, &m_id);
 	m_vertexBuffer = vertexBuffer;
-	numElements = vertexBuffer->getSize()/sizeof(GL_FLOAT);
+	numElements = vertexBuffer->getSize()/sizeof(GLfloat);
 }
 
 GL_VAO::GL_VAO(GL_VBO* vertexBuffer, GL_VBO* indexBuffer){
 	glGenVertexArrays(1, &m_id);
 	m_vertexBuffer = vertexBuffer;
 	m_indexBuffer = indexBuffer;
-	numElements = indexBuffer->getSize() / sizeof(GL_UNSIGNED_INT);
+	numElements = indexBuffer->getSize() / sizeof(GLuint);
 }
 
 GL_VAO::~GL_VAO(){
