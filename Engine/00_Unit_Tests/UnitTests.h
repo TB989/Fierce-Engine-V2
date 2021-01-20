@@ -54,6 +54,8 @@ public:
 	void onAppCleanUp(AppCleanUpEvent* event);
 
 	void onWindowResize(WindowResizeEvent* event);
+
+	void onKeyPressed(KeyDownEvent* event);
 private:
 	GL_VBO* vbo=nullptr;
 	GL_VAO* vao=nullptr;

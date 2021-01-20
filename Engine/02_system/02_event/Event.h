@@ -42,3 +42,18 @@ struct WindowResizeEvent : public Event {
 	int m_width;
 	int m_height;
 };
+
+struct KeyDownEvent : public Event {
+	KeyDownEvent(WPARAM key) :m_key{ key } {}
+	WPARAM m_key;
+};
+
+struct KeyUpEvent : public Event {
+	KeyUpEvent(WPARAM key) :m_key{ key } {}
+	WPARAM m_key;
+};
+
+struct CharEvent : public Event {
+	CharEvent(char character) :m_character{ character } {}
+	char m_character;
+};

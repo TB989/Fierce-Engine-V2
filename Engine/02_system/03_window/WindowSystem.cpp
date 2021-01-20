@@ -19,6 +19,20 @@ LRESULT CALLBACK wndProcFierceWindow(HWND hWnd, UINT message, WPARAM wParam, LPA
 	case WM_SIZE:
 		windowSystem->postEvent(new WindowResizeEvent(LOWORD(lParam), HIWORD(lParam)));
 		return 0;
+	//*** Keyboard ***//
+	case WM_KEYDOWN:
+		windowSystem->postEvent(new KeyDownEvent(wParam));
+		Loggers::CORE->warn("Event: KEYDOWN");
+		return 0;
+	case WM_KEYUP:
+		windowSystem->postEvent(new KeyUpEvent(wParam));
+		Loggers::CORE->warn("Event: KEYUP");
+		return 0;
+	case WM_CHAR:
+		windowSystem->postEvent(new CharEvent(wParam));
+		Loggers::CORE->warn("Event: CHAR");
+		return 0;
+	//****************//
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}

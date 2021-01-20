@@ -1,25 +1,12 @@
 #include "Geometry2D.h"
 
 void Rectangle2D::getVertices(std::vector<float> &vertices, int numPoints, float angle, float innerRadius){
-	vertices.push_back(0);
-	vertices.push_back(0);
-
-	vertices.push_back(0);
-	vertices.push_back(1);
-
-	vertices.push_back(1);
-	vertices.push_back(1);
-
-	vertices.push_back(1);
-	vertices.push_back(0);
+	addVertex2D(vertices, 0, 0);
+	addVertex2D(vertices, 0, 1);
+	addVertex2D(vertices, 1, 1);
+	addVertex2D(vertices, 1, 0);
 }
 
 void Rectangle2D::getIndices(std::vector<unsigned int> &indices, int numPoints, float angle, float innerRadius){
-	indices.push_back(0);
-	indices.push_back(1);
-	indices.push_back(2);
-
-	indices.push_back(0);
-	indices.push_back(2);
-	indices.push_back(3);
+	addQuadIndices(indices, 0, 1, 2, 3);
 }

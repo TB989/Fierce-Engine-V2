@@ -27,6 +27,8 @@ Test_openGLContext::Test_openGLContext() {
 	eventSystem->addListener(this, &Test_openGLContext::onAppCleanUp);
 
 	eventSystem->addListener(this, &Test_openGLContext::onWindowResize);
+
+	eventSystem->addListener(this, &Test_openGLContext::onKeyPressed);
 }
 
 void Test_openGLContext::onAppInit(AppInitEvent* event) {
@@ -39,7 +41,7 @@ void Test_openGLContext::onAppInit(AppInitEvent* event) {
 
 	std::vector<GLfloat> vertices;
 	std::vector<GLuint> indices;
-	loader->loadGeometry(new ComponentGeometry(GeometryType::TRIANGLE,32,360.0f,0.25f),vertices,indices);
+	loader->loadGeometry(new ComponentGeometry(GeometryType::CIRCLE_RING,32,300.0f,0.25f),vertices,indices);
 
 	GL_VBO* vbo = new GL_VBO(GL_ARRAY_BUFFER);
 	vbo->loadData(sizeof(GLfloat)*vertices.size(), vertices.data(), GL_STATIC_DRAW);
@@ -64,4 +66,10 @@ void Test_openGLContext::onAppCleanUp(AppCleanUpEvent* event) {
 
 void Test_openGLContext::onWindowResize(WindowResizeEvent* event) {
 	Loggers::CORE->info("Resize to [%ix%i]", event->m_width, event->m_height);
+}
+
+void Test_openGLContext::onKeyPressed(KeyDownEvent* event) {
+	if (event->m_key==VK_ESCAPE) {
+		eventSystem->postEvent(new WindowCloseEvent());
+	}
 }
