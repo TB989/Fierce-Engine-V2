@@ -53,7 +53,7 @@ void Core::coreInit() {
 	if (m_settings.windowMode != HEADLESS) {
 		Loggers::CORE->info("Starting window system.");
 		windowSystem = new WindowSystem(this, &m_settings);
-		m_window = windowSystem->createWindow();
+		m_window = windowSystem->getWindow();
 
 		Loggers::CORE->info("Starting render system.");
 		renderSystem = new GL_RenderSystem(this, &m_settings);

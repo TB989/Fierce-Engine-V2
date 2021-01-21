@@ -16,7 +16,7 @@ GL_RenderSystem::GL_RenderSystem(Core* app, EngineSettings* settings){
 	context = new GL_Context(app);
 
 	orthographicProjectionMatrix = new Mat4();
-	orthographicProjectionMatrix->setToOrthographicProjection(800, 600, -1.0f, 1.0f);
+	orthographicProjectionMatrix->setToOrthographicProjection(settings->width, settings->height, -1.0f, 1.0f);
 
 	loadShaders();
 	loadPipelines();

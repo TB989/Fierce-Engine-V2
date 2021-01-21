@@ -3,31 +3,50 @@
 #include "01_core/errorHandling/Exceptions.h"
 #include "02_system/01_logging/Logger.h"
 
-FierceWindow::FierceWindow(LPCWSTR className, LPCWSTR title, EngineSettings* settings) {
-	CHECK_FIERCE(createWindow(className, title, CW_USEDEFAULT, CW_USEDEFAULT, settings->width, settings->height), "Failed to create window.");
+FierceWindow::FierceWindow(LPCWSTR className, LPCWSTR title, EngineSettings* settings,bool dummy) {
+	CHECK_FIERCE(createWindow(className, title, settings,dummy), "Failed to create window.");
 }
 
 FierceWindow::~FierceWindow(){
 	CHECK_FIERCE(destroyWindow(),"Failed to destroy window.");
 }
 
-FIERCE_ERROR FierceWindow::createWindow(LPCWSTR className, LPCWSTR title, int x, int y, int width, int height) {
+FIERCE_ERROR FierceWindow::createWindow(LPCWSTR className, LPCWSTR title, EngineSettings* settings, bool dummy) {
+	DWORD style=0;
+	DWORD exStyle = WS_EX_APPWINDOW | WS_EX_TOPMOST;
 
 	RECT r = RECT();
-	r.top = 0;
-	r.bottom = height;
 	r.left = 0;
-	r.right = width;
-	if (!AdjustWindowRectEx(&r, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_TOPMOST)) {
+	r.top = 0;
+
+	if (settings->windowMode==FULLSCREEN) {
+		style = WS_POPUP;
+		r.right = GetSystemMetrics(SM_CXSCREEN);
+		r.bottom = GetSystemMetrics(SM_CYSCREEN);
+		settings->width= GetSystemMetrics(SM_CXSCREEN);
+		settings->height= GetSystemMetrics(SM_CYSCREEN);
+	}
+	else if(settings->windowMode==WINDOWED){
+		style = WS_TILEDWINDOW;
+		r.right = settings->width;
+		r.bottom = settings->height;
+	}
+	else {
+		style = WS_TILEDWINDOW;
+		r.right = 0;
+		r.bottom = 0;
+	}
+
+	if (!AdjustWindowRectEx(&r, style, FALSE, exStyle)) {
 		return FE_WINDOW_ERROR;
 	}
 
 	windowHandle = CreateWindowEx(
-		WS_EX_APPWINDOW | WS_EX_TOPMOST,
+		exStyle,
 		className,
 		title,
-		WS_OVERLAPPEDWINDOW,
-		0, 0,
+		style,
+		CW_USEDEFAULT, CW_USEDEFAULT,
 		r.right - r.left, r.bottom - r.top,
 		NULL,
 		NULL,

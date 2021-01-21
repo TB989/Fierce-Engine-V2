@@ -21,7 +21,7 @@ enum FIERCE_ERROR;
 
 class FierceWindow {
 public:
-	FierceWindow(LPCWSTR className, LPCWSTR title, EngineSettings* settings);
+	FierceWindow(LPCWSTR className, LPCWSTR title, EngineSettings* settings,bool dummy);
 	~FierceWindow();
 
 	void pollEvents();
@@ -29,7 +29,7 @@ public:
 
 	HWND getHandle() { return windowHandle; }
 private:
-	FIERCE_ERROR createWindow(LPCWSTR className, LPCWSTR title, int x, int y, int width, int height);
+	FIERCE_ERROR createWindow(LPCWSTR className, LPCWSTR title, EngineSettings* settings, bool dummy);
 	FIERCE_ERROR destroyWindow();
 private:
 	HWND windowHandle=nullptr;

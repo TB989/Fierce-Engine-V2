@@ -9,6 +9,7 @@
 /* SystemIncludes*/
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <windowsx.h>
 #include <map>
 
 /* Forward declarations: 
@@ -28,12 +29,12 @@ public:
 	WindowSystem(Core* app, EngineSettings* settings);
 	~WindowSystem();
 
+	FierceWindow* getWindow() { return m_window; }
+
 	template<typename EventType>
 	void postEvent(EventType* evnt) {
 		m_app->eventSystem->postEvent(evnt);
 	}
-
-	FierceWindow* createWindow();
 
 private:
 	FIERCE_ERROR registerWindowClass(LPCWSTR className, WNDPROC wndProc);

@@ -13,24 +13,50 @@ LRESULT CALLBACK wndProcFierceWindow(HWND hWnd, UINT message, WPARAM wParam, LPA
 	WindowSystem* windowSystem = static_cast<WindowSystem*>(GetProp(hWnd, L"windowSystem"));
 
 	switch (message) {
+	//*** Window ***//
 	case WM_CLOSE:
 		windowSystem->postEvent(new WindowCloseEvent());
 		return 0;
 	case WM_SIZE:
-		windowSystem->postEvent(new WindowResizeEvent(LOWORD(lParam), HIWORD(lParam)));
+		//FIXME: Bug for fullscreen
+		if (windowSystem != nullptr) {
+			windowSystem->postEvent(new WindowResizeEvent(LOWORD(lParam), HIWORD(lParam)));
+		}
 		return 0;
 	//*** Keyboard ***//
 	case WM_KEYDOWN:
 		windowSystem->postEvent(new KeyDownEvent(wParam));
-		Loggers::CORE->warn("Event: KEYDOWN");
 		return 0;
 	case WM_KEYUP:
 		windowSystem->postEvent(new KeyUpEvent(wParam));
-		Loggers::CORE->warn("Event: KEYUP");
 		return 0;
 	case WM_CHAR:
 		windowSystem->postEvent(new CharEvent(wParam));
-		Loggers::CORE->warn("Event: CHAR");
+		return 0;
+	//*** Mouse ***//
+	case WM_LBUTTONDOWN:
+		windowSystem->postEvent(new ButtonDownEvent(MOUSE_BUTTON::LEFT, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+		return 0;
+	case WM_RBUTTONDOWN:
+		windowSystem->postEvent(new ButtonDownEvent(MOUSE_BUTTON::RIGHT, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+		return 0;
+	case WM_MBUTTONDOWN:
+		windowSystem->postEvent(new ButtonDownEvent(MOUSE_BUTTON::MIDDLE, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+		return 0;
+	case WM_LBUTTONUP:
+		windowSystem->postEvent(new ButtonUpEvent(MOUSE_BUTTON::LEFT, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+		return 0;
+	case WM_RBUTTONUP:
+		windowSystem->postEvent(new ButtonUpEvent(MOUSE_BUTTON::RIGHT, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+		return 0;
+	case WM_MBUTTONUP:
+		windowSystem->postEvent(new ButtonUpEvent(MOUSE_BUTTON::MIDDLE, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+		return 0;
+	case WM_MOUSEMOVE :
+		windowSystem->postEvent(new MouseMoveEvent( GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+		return 0;
+	case WM_MOUSEWHEEL:
+		windowSystem->postEvent(new MouseScrollEvent(GET_WHEEL_DELTA_WPARAM(wParam),GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
 		return 0;
 	//****************//
 	default:
@@ -52,8 +78,10 @@ WindowSystem::WindowSystem(Core* app, EngineSettings* settings){
 	CHECK_FIERCE(registerWindowClass(fierceWindowClassName,wndProcFierceWindow), "Failed to register window class for fierce window.");
 	CHECK_FIERCE(registerWindowClass(fierceDummyWindowClassName,wndProcFierceDummyWindow), "Failed to register window class for fierce dummy window.");
 
-	m_dummyWindow = new FierceWindow(fierceDummyWindowClassName, L"FierceDummyWindow", m_settings);
-	SetProp(m_dummyWindow->getHandle(), L"windowSystem", this);
+	m_dummyWindow = new FierceWindow(fierceDummyWindowClassName, L"FierceDummyWindow", m_settings,true);
+	m_window= new FierceWindow(fierceWindowClassName, L"FierceWindow", m_settings, false);
+
+	SetProp(m_window->getHandle(), L"windowSystem", this);
 }
 
 WindowSystem::~WindowSystem(){
@@ -61,17 +89,6 @@ WindowSystem::~WindowSystem(){
 	delete m_window;
 	CHECK_FIERCE(unregisterWindowClass(fierceWindowClassName), "Failed to unregister window class for fierce window.");
 	CHECK_FIERCE(unregisterWindowClass(fierceDummyWindowClassName), "Failed to unregister window class for fierce dummy window.");
-}
-
-FierceWindow* WindowSystem::createWindow(){
-	if (m_window==nullptr) {
-		m_window = new FierceWindow(fierceWindowClassName, L"FierceWindow", m_settings);
-		SetProp(m_window->getHandle(), L"windowSystem", this);
-		return m_window;
-	}
-	else {
-		return m_window;
-	}
 }
 
 void WindowSystem::onHandleRequested(WindowRequestHandleEvent* evt){
