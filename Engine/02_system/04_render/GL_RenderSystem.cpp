@@ -60,7 +60,10 @@ void GL_RenderSystem::render(){
 		modelMatrix.transform(entity->getTransform());
 		pipelines["MyFirstPipeline"]->loadUniform("modelMatrix", &modelMatrix);
 
-		ComponentMesh* mesh = (ComponentMesh*)(entity->getComponent(""));
+		ComponentMaterialColor* color = (ComponentMaterialColor*)(entity->getComponent(ComponentType::MATERIAL_COLOR));
+		pipelines["MyFirstPipeline"]->loadUniform("color", color->getR(),color->getG(),color->getB());
+
+		ComponentMesh* mesh = (ComponentMesh*)(entity->getComponent(ComponentType::MESH));
 		mesh->render();
 	}
 
@@ -79,6 +82,7 @@ void GL_RenderSystem::loadPipelines(){
 	pipeline->addVertexAttribute(VertexAttribute::POS2);
 	pipeline->addUniformLocation("projectionMatrix");
 	pipeline->addUniformLocation("modelMatrix");
+	pipeline->addUniformLocation("color");
 	pipeline->create();
 	pipeline->bind();
 	pipeline->loadUniform("projectionMatrix", orthographicProjectionMatrix);

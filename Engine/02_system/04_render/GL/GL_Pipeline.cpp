@@ -85,6 +85,58 @@ void GL_Pipeline::addUniformLocation(std::string name){
 	uniformLocations.push_back(loc);
 }
 
+void GL_Pipeline::loadUniform(std::string name, float v1) {
+	GLint load = -1;
+	for (const UniformLocation* loc : uniformLocations) {
+		if (loc->name.compare(name) == 0) {
+			load = loc->location;
+			glUniform1f(load, v1);
+			return;
+		}
+	}
+
+	Loggers::GL->warn("Uniform location %s is not found in shader.", name.c_str());
+}
+
+void GL_Pipeline::loadUniform(std::string name, float v1,float v2) {
+	GLint load = -1;
+	for (const UniformLocation* loc : uniformLocations) {
+		if (loc->name.compare(name) == 0) {
+			load = loc->location;
+			glUniform2f(load, v1,v2);
+			return;
+		}
+	}
+
+	Loggers::GL->warn("Uniform location %s is not found in shader.", name.c_str());
+}
+
+void GL_Pipeline::loadUniform(std::string name, float v1, float v2,float v3) {
+	GLint load = -1;
+	for (const UniformLocation* loc : uniformLocations) {
+		if (loc->name.compare(name) == 0) {
+			load = loc->location;
+			glUniform3f(load, v1, v2,v3);
+			return;
+		}
+	}
+
+	Loggers::GL->warn("Uniform location %s is not found in shader.", name.c_str());
+}
+
+void GL_Pipeline::loadUniform(std::string name, float v1, float v2, float v3,float v4) {
+	GLint load = -1;
+	for (const UniformLocation* loc : uniformLocations) {
+		if (loc->name.compare(name) == 0) {
+			load = loc->location;
+			glUniform4f(load, v1, v2, v3,v4);
+			return;
+		}
+	}
+
+	Loggers::GL->warn("Uniform location %s is not found in shader.", name.c_str());
+}
+
 void GL_Pipeline::loadUniform(std::string name, Mat4* matrix){
 	GLint load = -1;
 	for (const UniformLocation* loc : uniformLocations) {

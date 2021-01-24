@@ -55,6 +55,7 @@ void Test_openGLContext::onAppInit(AppInitEvent* event) {
 	entity = new Entity2D("Test");
 	entity->setTransform(new Transform2D(5,5,500,500,0));
 	entity->addComponent(new ComponentMesh(vao));
+	entity->addComponent(new ComponentMaterialColor(0, 1, 0));
 	renderSystem->addEntity(entity);
 }
 

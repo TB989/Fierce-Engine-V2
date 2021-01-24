@@ -32,6 +32,10 @@ public:
 	void unbind();
 
 	void addUniformLocation(std::string name);
+	void loadUniform(std::string location, float v1);
+	void loadUniform(std::string location, float v1,float v2);
+	void loadUniform(std::string location, float v1,float v2,float v3);
+	void loadUniform(std::string location, float v1,float v2,float v3,float v4);
 	void loadUniform(std::string location, Mat4* matrix);
 
 	void addVertexAttribute(VertexAttribute* attribute);

@@ -5,6 +5,7 @@
 *  -Objects: Object myObject;
 */
 #include "99_utils/FierceStrings.h"
+#include "05_ECS/Component.h"
 
 /* SystemIncludes*/
 #include <typeinfo>
@@ -17,7 +18,6 @@
 *              Reference& MyFunction(Reference& myReference);
 */
 
-class Component;
 class Transform2D;
 class Transform3D;
 
@@ -26,8 +26,13 @@ public:
 	Entity(std::string name) { m_name = name; }
 
 	void addComponent(Component* component) { components.push_back(component); }
-	Component* getComponent(std::string type) {
-		return components[0];
+	Component* getComponent(ComponentType type) {
+		for (Component* component:components) {
+			if (component->getComponentType()==type) {
+				return component;
+			}
+		}
+		return nullptr;
 	}
 protected:
 	std::string m_name;
