@@ -23,3 +23,26 @@ void GL_Renderer_Geometry3D::createPipeline() {
 	pipeline->addUniformLocation("color");
 	pipeline->create();
 }
+
+void GL_Renderer_Geometry3D::renderEntity(Entity3D* entity) {
+	ComponentMaterialColors* colors = (ComponentMaterialColors*)(entity->getComponent(ComponentType::MATERIAL_COLORS));
+	colors->reset();
+	ComponentMesh* mesh = (ComponentMesh*)(entity->getComponent(ComponentType::MESH));
+	Color3f* color;
+	ComponentGeometry* geo = (ComponentGeometry*)(entity->getComponent(ComponentType::GEOMETRY));
+	int count = 0;
+
+	switch (geo->getType()) {
+	case PLANE:
+		color = colors->getNextColor();
+		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		mesh->render();
+		break;
+	case CUBE:
+		for (int i = 0;i<6;i++) {
+			color = colors->getNextColor();
+			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			mesh->render(i*6, 6);
+		}
+	}
+}

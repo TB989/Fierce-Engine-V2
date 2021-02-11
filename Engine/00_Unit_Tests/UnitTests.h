@@ -53,7 +53,11 @@ public:
 
 	void onKeyPressed(KeyDownEvent* event);
 private:
-	Entity2D* entity=nullptr;
+	Entity2D* rectangle=nullptr;
+	Entity2D* triangle = nullptr;
+	Entity2D* circle = nullptr;
+	Entity2D* circleRing = nullptr;
+
 	Entity3D* plane = nullptr;
 	Entity3D* cube = nullptr;
 };

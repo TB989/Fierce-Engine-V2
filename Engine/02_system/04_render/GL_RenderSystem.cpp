@@ -18,6 +18,8 @@
 #include "GL_Renderer_Geometry2D.h"
 #include "GL_Renderer_Geometry3D.h"
 
+#include "01_core/errorHandling/Exceptions.h"
+
 GL_RenderSystem::GL_RenderSystem(Core* app, EngineSettings* settings, Entity3D* camera){
 	m_camera = camera;
 
@@ -45,12 +47,12 @@ GL_RenderSystem::GL_RenderSystem(Core* app, EngineSettings* settings, Entity3D* 
 		renderer.second->getPipeline()->unbind();
 	}
 
-	//glEnable(GL_DEPTH_TEST);
-	//glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
-	/**glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);*/
+	glFrontFace(GL_CCW);
 }
 
 GL_RenderSystem::~GL_RenderSystem(){
@@ -91,7 +93,7 @@ void GL_RenderSystem::addEntity(Entity3D* entity){
 }
 
 void GL_RenderSystem::render(){
-	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	Mat4 viewMatrix;
@@ -99,14 +101,18 @@ void GL_RenderSystem::render(){
 
 	//Render 3D
 	for (std::pair<RenderType, GL_Abstract_Renderer_3D*> renderer : renderers3D) {
+		renderer.second->getPipeline()->bind();
 		renderer.second->getPipeline()->loadUniform("viewMatrix", &viewMatrix);
+		renderer.second->getPipeline()->unbind();
 		renderer.second->render();
 	}
 
 	//Render 2D
+	glDisable(GL_DEPTH_TEST);
 	for (std::pair<RenderType, GL_Abstract_Renderer_2D*> renderer : renderers2D) {
 		renderer.second->render();
 	}
+	glEnable(GL_DEPTH_TEST);
 
 	//Swap buffers
 	context->swapBuffers();

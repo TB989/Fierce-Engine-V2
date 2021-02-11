@@ -21,9 +21,6 @@ void GL_Abstract_Renderer_3D::prepareEntity(Entity3D* entity) {
 	modelMatrix.setToIdentity();
 	modelMatrix.transform(entity->getTransform());
 	pipeline->loadUniform("modelMatrix", &modelMatrix);
-
-	ComponentMaterialColor* color = (ComponentMaterialColor*)(entity->getComponent(ComponentType::MATERIAL_COLOR));
-	pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 }
 
 void GL_Abstract_Renderer_3D::renderEntity(Entity3D* entity) {

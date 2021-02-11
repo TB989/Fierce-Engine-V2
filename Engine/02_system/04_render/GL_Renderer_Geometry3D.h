@@ -23,4 +23,6 @@ public:
 public:
 	void loadShaders() override;
 	void createPipeline() override;
+
+	void renderEntity(Entity3D* entity);
 };
