@@ -285,6 +285,14 @@ void Mat4::setToTransform(Transform3D* transform){
 	this->translate(transform->getPosition()->getX(), transform->getPosition()->getY(), transform->getPosition()->getZ());
 }
 
+void Mat4::setToView(Transform3D* transform){
+	this->setToTranslation(-transform->getPosition()->getX(), -transform->getPosition()->getY(), -transform->getPosition()->getZ());
+	this->rotateZ(transform->getRotation()->getZ());
+	this->rotateY(transform->getRotation()->getY());
+	this->rotateX(transform->getRotation()->getX());
+	this->scale(transform->getScale()->getX(), transform->getScale()->getY(), transform->getScale()->getZ());
+}
+
 Mat4* Mat4::translate(float x, float y, float z){
 	float temp1 = M03 * x;
 	float temp2 = M13 * x;

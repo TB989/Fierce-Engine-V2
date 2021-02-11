@@ -6,9 +6,11 @@
 */
 
 #include "02_system/04_render/GL/GL_VAO.h"
-#include "06_Geometry/Geometry2D.h"
+#include "06_Geometry/Geometry.h"
+#include "04_math/04_color/Color.h"
 
 /* SystemIncludes*/
+#include <vector>
 
 /* Forward declarations: 
 *  -Pointers:  Pointer* myPointer;
@@ -21,7 +23,8 @@
 enum ComponentType {
 	MESH,
 	GEOMETRY,
-	MATERIAL_COLOR
+	MATERIAL_COLOR,
+	MATERIAL_COLORS
 };
 
 class Component{
@@ -40,6 +43,12 @@ public:
 	void render() {
 		m_vao->bind();
 		m_vao->draw();
+		m_vao->unbind();
+	}
+
+	void render(GLsizei first,GLsizei count) {
+		m_vao->bind();
+		m_vao->draw(first,count);
 		m_vao->unbind();
 	}
 private:
@@ -71,18 +80,38 @@ private :
 class ComponentMaterialColor :public Component {
 public:
 	ComponentMaterialColor(float r,float g,float b) {
-		m_r = r;
-		m_g = g;
-		m_b = b;
+		color = new Color3f(r,g,b);
 	}
 
 	ComponentType getComponentType() { return ComponentType::MATERIAL_COLOR; }
 
-	float getR() { return m_r; }
-	float getG() { return m_g; }
-	float getB() { return m_b; }
+	float getR() { return color->getR(); }
+	float getG() { return color->getG(); }
+	float getB() { return color->getB(); }
 private:
-	float m_r;
-	float m_g;
-	float m_b;
+	Color3f* color;
+};
+
+class ComponentMaterialColors :public Component {
+public:
+	ComponentMaterialColors(std::vector<Color3f*> colors) {
+		m_colors = colors;
+	}
+
+	Color3f* getNextColor() {
+		counter++;
+		counter=counter% m_colors.size();
+		return m_colors[counter];
+	}
+
+	void reset() {
+		counter = -1;
+	}
+
+	ComponentType getComponentType() { return ComponentType::MATERIAL_COLORS; }
+
+private:
+	std::vector<Color3f*> m_colors;
+
+	int counter = -1;
 };

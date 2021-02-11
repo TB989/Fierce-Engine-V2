@@ -4,11 +4,12 @@
 *  -Parent class
 *  -Objects: Object myObject;
 */
-#include "06_Geometry/Geometry.h"
+#include "02_system/04_render/GL/GL_Pipeline.h"
+#include "02_system/04_render/GL/GL_Shader.h"
+#include "04_math/02_matrix/Matrix.h"
 
 /* SystemIncludes*/
 #include <vector>
-#include <map>
 
 /* Forward declarations: 
 *  -Pointers:  Pointer* myPointer;
@@ -17,12 +18,19 @@
 *              Pointer* MyFunction(Pointer* myPointer);
 *              Reference& MyFunction(Reference& myReference);
 */
-class ComponentGeometry;
 
-class GeometryLoader{
+class GL_Abstract_Renderer{
 public:
-	void loadGeometry(ComponentGeometry* geometry,std::vector<float> &vertices,std::vector<unsigned int> &indices);
-	void registerGeometry(GeometryType type, Geometry* geometry);
-private:
-	std::map<GeometryType, Geometry*> geometries;
+	~GL_Abstract_Renderer();
+
+	GL_Pipeline* getPipeline();
+
+protected:
+	GL_Shader* vertexShader;
+	GL_Shader* fragmentShader;
+	GL_Pipeline* pipeline;
+
+public:
+	virtual void loadShaders()=0;
+	virtual void createPipeline()=0;
 };

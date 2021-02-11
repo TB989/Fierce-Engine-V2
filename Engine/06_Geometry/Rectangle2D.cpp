@@ -1,4 +1,4 @@
-#include "Geometry2D.h"
+#include "Geometry.h"
 
 void Rectangle2D::getVertices(std::vector<float> &vertices, int numPoints, float angle, float innerRadius){
 	addVertex2D(vertices, 0, 0);

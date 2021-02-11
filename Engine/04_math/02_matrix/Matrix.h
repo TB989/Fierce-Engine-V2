@@ -58,10 +58,11 @@ public:
 	void setToYRotation(float angle);
 	void setToZRotation(float angle);
 	void setToScale(float scaleX,float scaleY,float scaleZ);
-	void setToOrthographicProjection(float width, float height,float near,float far);
-	void setToPerspectiveProjection(float aspect, float FOV, float near, float far);
+	void setToOrthographicProjection(float width, float height,float n,float f);
+	void setToPerspectiveProjection(float aspect, float FOV, float n, float f);
 	void setToTransform(Transform2D* transform);
 	void setToTransform(Transform3D* transform);
+	void setToView(Transform3D* transform);
 
 	Mat4* translate(float x,float y,float z);
 	Mat4* rotateX(float angle);

@@ -4,11 +4,9 @@
 *  -Parent class
 *  -Objects: Object myObject;
 */
-#include "06_Geometry/Geometry.h"
+#include "GL_Abstract_Renderer_2D.h"
 
 /* SystemIncludes*/
-#include <vector>
-#include <map>
 
 /* Forward declarations: 
 *  -Pointers:  Pointer* myPointer;
@@ -17,12 +15,14 @@
 *              Pointer* MyFunction(Pointer* myPointer);
 *              Reference& MyFunction(Reference& myReference);
 */
-class ComponentGeometry;
 
-class GeometryLoader{
+class GL_Renderer_Color2D:public GL_Abstract_Renderer_2D{
 public:
-	void loadGeometry(ComponentGeometry* geometry,std::vector<float> &vertices,std::vector<unsigned int> &indices);
-	void registerGeometry(GeometryType type, Geometry* geometry);
-private:
-	std::map<GeometryType, Geometry*> geometries;
+	GL_Renderer_Color2D();
+
+public:
+	void loadShaders();
+	void createPipeline();
+
+	void prepareEntity(Entity2D* entity);
 };

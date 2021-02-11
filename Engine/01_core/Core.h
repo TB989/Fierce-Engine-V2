@@ -20,6 +20,9 @@ class WindowSystem;
 class GL_RenderSystem;
 class FierceWindow;
 struct WindowCloseEvent;
+struct MouseMoveEvent;
+struct KeyDownEvent;
+class Entity3D;
 
 class Core {
 private:
@@ -44,5 +47,13 @@ private:
 
 	void onWindowClosed(WindowCloseEvent* event);
 
+	bool first = true;
+	int m_x_alt=0;
+	int m_y_alt=0;
+	void onMouseMoved(MouseMoveEvent* event);
+	void onKeyPressed(KeyDownEvent* event);
+
 	FierceWindow* m_window=nullptr;
+
+	Entity3D* camera = nullptr;
 };

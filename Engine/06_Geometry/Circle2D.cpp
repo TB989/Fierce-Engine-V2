@@ -1,4 +1,4 @@
-#include "Geometry2D.h"
+#include "Geometry.h"
 
 void Circle2D::getVertices(std::vector<float>& vertices, int numPoints, float angle, float innerRadius) {
 	addVertex2D(vertices,0.5f,0.5f);

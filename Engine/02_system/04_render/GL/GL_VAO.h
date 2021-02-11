@@ -30,6 +30,7 @@ public:
 
 	void addVertexAttribute(VertexAttribute* attribute);
 	void draw();
+	void draw(GLsizei first, GLsizei count);
 private:
 	GLuint m_id;
 	GL_VBO* m_vertexBuffer=nullptr;

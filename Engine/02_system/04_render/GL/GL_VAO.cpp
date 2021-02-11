@@ -65,3 +65,7 @@ void GL_VAO::draw(){
 		glDrawElements(GL_TRIANGLES, numElements,GL_UNSIGNED_INT, (void*)0);
 	}
 }
+
+void GL_VAO::draw(GLsizei first,GLsizei count) {
+	glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, (void*)(sizeof(GLsizei)*first));
+}

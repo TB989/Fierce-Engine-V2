@@ -6,6 +6,7 @@
 */
 #include "99_utils/FierceStrings.h"
 #include "05_ECS/Component.h"
+#include "02_system/04_render/RenderType.h"
 
 /* SystemIncludes*/
 #include <typeinfo>
@@ -26,6 +27,7 @@ public:
 	Entity(std::string name) { m_name = name; }
 
 	void addComponent(Component* component) { components.push_back(component); }
+
 	Component* getComponent(ComponentType type) {
 		for (Component* component:components) {
 			if (component->getComponentType()==type) {
@@ -34,9 +36,16 @@ public:
 		}
 		return nullptr;
 	}
+
+	std::string getName() { return m_name; }
+
+	void setRenderType(RenderType type) { m_renderType = type; }
+	RenderType getRenderType() { return m_renderType; }
+
 protected:
 	std::string m_name;
 	std::vector<Component*> components;
+	RenderType m_renderType=RenderType::NONE;
 };
 
 class Entity2D : public Entity{
@@ -51,6 +60,7 @@ private:
 };
 
 class Entity3D : public Entity{
+public:
 	Entity3D(std::string name) :Entity(name) {};
 
 	void setTransform(Transform3D* transform) { m_transform = transform; }

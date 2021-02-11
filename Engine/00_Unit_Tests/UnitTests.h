@@ -16,12 +16,8 @@
 *              Pointer* MyFunction(Pointer* myPointer);
 *              Reference& MyFunction(Reference& myReference);
 */
-class GL_Context;
-class GL_Shader;
-class GL_Pipeline;
-class GL_VBO;
-class GL_VAO;
 class Entity2D;
+class Entity3D;
 
 class Test_logging : public Core {
 
@@ -57,10 +53,9 @@ public:
 
 	void onKeyPressed(KeyDownEvent* event);
 private:
-	GL_VBO* vbo=nullptr;
-	GL_VAO* vao=nullptr;
-
 	Entity2D* entity=nullptr;
+	Entity3D* plane = nullptr;
+	Entity3D* cube = nullptr;
 };
 
 class Test_math : public Core {

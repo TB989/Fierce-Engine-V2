@@ -7,6 +7,12 @@
 #include "02_system/03_window/FierceWindow.h"
 #include "02_system/04_render/GL_RenderSystem.h"
 #include "03_io/parser/Parser.h"
+#include "05_ECS/Entity.h"
+#include "04_math/03_transform/Transform.h"
+#include "04_math/01_vector/Vector.h"
+
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 Core::Core() {
 	Loggers::CORE->info("Loading engine settings.");
@@ -16,6 +22,8 @@ Core::Core() {
 	Loggers::CORE->info("Starting event system.");
 	eventSystem = new EventSystem();
 	eventSystem->addListener(this, &Core::onWindowClosed);
+	eventSystem->addListener(this, &Core::onMouseMoved);
+	eventSystem->addListener(this, &Core::onKeyPressed);
 }
 
 Core::~Core() {
@@ -55,8 +63,12 @@ void Core::coreInit() {
 		windowSystem = new WindowSystem(this, &m_settings);
 		m_window = windowSystem->getWindow();
 
+		Loggers::CORE->info("Creating camera.");
+		camera = new Entity3D("Camera");
+		camera->setTransform(new Transform3D(0, 2, 0, 1,1,1, 0, 0, 0));
+
 		Loggers::CORE->info("Starting render system.");
-		renderSystem = new GL_RenderSystem(this, &m_settings);
+		renderSystem = new GL_RenderSystem(this, &m_settings,camera);
 	}
 
 	Loggers::CORE->info("Starting engine.");
@@ -78,4 +90,55 @@ void Core::coreCleanUp() {
 
 void Core::onWindowClosed(WindowCloseEvent* event) {
 	running = false;
+}
+
+void Core::onMouseMoved(MouseMoveEvent* event){
+	if (first) {
+		m_x_alt = event->m_x;
+		m_y_alt = event->m_y;
+		first = false;
+		return;
+	}
+
+	int dx = m_x_alt - event->m_x;
+	int dy = m_y_alt - event->m_y;
+
+	Vector3f* angles=camera->getTransform()->getRotation();
+
+	float angleX = angles->getX() - 0.3f * dy;
+	if (angleX>45.0f) {
+		angleX = 45.0f;
+	}
+	if (angleX < -45.0f) {
+		angleX = -45.0f;
+	}
+	angles->setX(angleX);
+
+	float angleY = angles->getY() - 0.3f * dx;
+	angles->setY(angleY);
+
+	m_x_alt = event->m_x;
+	m_y_alt = event->m_y;
+}
+
+void Core::onKeyPressed(KeyDownEvent* event) {
+	if (event->m_key == 'W') {
+		Vector3f* angles = camera->getTransform()->getRotation();
+		Vector3f* position = camera->getTransform()->getPosition();
+		float angleY = angles->getY();
+		float s = sin(M_PI / 180.0f * angleY);
+		float c = cos(M_PI / 180.0f * angleY);
+		position->setX(position->getX() + s*0.3f);
+		position->setZ(position->getZ() - c * 0.3f);
+	}
+
+	if (event->m_key == 'S') {
+		Vector3f* angles = camera->getTransform()->getRotation();
+		Vector3f* position = camera->getTransform()->getPosition();
+		float angleY = angles->getY();
+		float s = sin(M_PI / 180.0f * angleY);
+		float c = cos(M_PI / 180.0f * angleY);
+		position->setX(position->getX() - s * 0.3f);
+		position->setZ(position->getZ() + c * 0.3f);
+	}
 }
