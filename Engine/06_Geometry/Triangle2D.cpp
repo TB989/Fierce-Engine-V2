@@ -7,5 +7,5 @@ void Triangle2D::getVertices(std::vector<float>& vertices, int numPoints, float 
 }
 
 void Triangle2D::getIndices(std::vector<unsigned int>& indices, int numPoints, float angle, float innerRadius) {
-	addTriangleIndices(indices,0, 1, 2);
+	addTriangleIndices(indices,0, 1, 2,false);
 }

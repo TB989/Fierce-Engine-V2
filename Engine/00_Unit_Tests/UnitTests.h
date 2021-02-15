@@ -60,6 +60,9 @@ private:
 
 	Entity3D* plane = nullptr;
 	Entity3D* cube = nullptr;
+	Entity3D* cylinder = nullptr;
+	Entity3D* hollowCylinder = nullptr;
+	Entity3D* cone = nullptr;
 };
 
 class Test_math : public Core {

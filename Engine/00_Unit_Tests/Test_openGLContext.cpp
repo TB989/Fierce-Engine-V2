@@ -36,6 +36,9 @@ void Test_openGLContext::onAppInit(AppInitEvent* event) {
 	loader->registerGeometry(GeometryType::TRIANGLE, new Triangle2D());
 	loader->registerGeometry(GeometryType::PLANE, new Plane3D());
 	loader->registerGeometry(GeometryType::CUBE, new Cube3D());
+	loader->registerGeometry(GeometryType::CYLINDER, new Cylinder3D());
+	loader->registerGeometry(GeometryType::HOLLOW_CYLINDER, new HollowCylinder3D());
+	loader->registerGeometry(GeometryType::CONE, new Cone3D());
 
 	//Color array
 	std::vector<Color3f*> colors;
@@ -56,6 +59,9 @@ void Test_openGLContext::onAppInit(AppInitEvent* event) {
 	ComponentGeometry* geo_circle_ring = new ComponentGeometry(GeometryType::CIRCLE_RING, 32, 360.0f, 0.25f);
 	ComponentGeometry* geo_plane = new ComponentGeometry(GeometryType::PLANE, 0, 0, 0);
 	ComponentGeometry* geo_cube = new ComponentGeometry(GeometryType::CUBE, 0, 0, 0);
+	ComponentGeometry* geo_cylinder = new ComponentGeometry(GeometryType::CYLINDER, 32, 270.0f, 0);
+	ComponentGeometry* geo_hollowCylinder = new ComponentGeometry(GeometryType::HOLLOW_CYLINDER, 32, 270.0f, 0.25f);
+	ComponentGeometry* geo_cone = new ComponentGeometry(GeometryType::CONE, 32, 270.0f, 0);
 
 	//Create rectangle
 	rectangle = new Entity2D("Rectangle");
@@ -99,6 +105,27 @@ void Test_openGLContext::onAppInit(AppInitEvent* event) {
 	cube->addComponent(new ComponentMaterialColors(colors));
 	cube->addComponent(geo_cube);
 
+	//Create cylinder
+	cylinder = new Entity3D("Cylinder");
+	cylinder->setRenderType(RenderType::GEOMETRY);
+	cylinder->setTransform(new Transform3D(3, 0.5f, -5, 1, 1, 1, 0, 0, 0));
+	cylinder->addComponent(new ComponentMaterialColors(colors));
+	cylinder->addComponent(geo_cylinder);
+
+	//Create hollow cylinder
+	hollowCylinder = new Entity3D("Hollow Cylinder");
+	hollowCylinder->setRenderType(RenderType::GEOMETRY);
+	hollowCylinder->setTransform(new Transform3D(6, 0.5f, -5, 1, 1, 1, 0, 0, 0));
+	hollowCylinder->addComponent(new ComponentMaterialColors(colors));
+	hollowCylinder->addComponent(geo_hollowCylinder);
+
+	//Create cone
+	cone = new Entity3D("Cone");
+	cone->setRenderType(RenderType::GEOMETRY);
+	cone->setTransform(new Transform3D(9, 0.5f, -5, 1, 1, 1, 0, 0, 0));
+	cone->addComponent(new ComponentMaterialColors(colors));
+	cone->addComponent(geo_cone);
+
 	//Load geometries
 	std::vector<GLfloat> vertices;
 	std::vector<GLuint> indices;
@@ -124,6 +151,18 @@ void Test_openGLContext::onAppInit(AppInitEvent* event) {
 	indices.clear();
 	loader->loadGeometry(geo_cube, vertices, indices);
 	cube->addComponent(new ComponentMesh(GL_MeshLoader::loadMesh(vertices, indices, VertexAttribute::POS3)));
+	vertices.clear();
+	indices.clear();
+	loader->loadGeometry(geo_cylinder, vertices, indices);
+	cylinder->addComponent(new ComponentMesh(GL_MeshLoader::loadMesh(vertices, indices, VertexAttribute::POS3)));
+	vertices.clear();
+	indices.clear();
+	loader->loadGeometry(geo_hollowCylinder, vertices, indices);
+	hollowCylinder->addComponent(new ComponentMesh(GL_MeshLoader::loadMesh(vertices, indices, VertexAttribute::POS3)));
+	vertices.clear();
+	indices.clear();
+	loader->loadGeometry(geo_cone, vertices, indices);
+	cone->addComponent(new ComponentMesh(GL_MeshLoader::loadMesh(vertices, indices, VertexAttribute::POS3)));
 
 	//Add to render system
 	renderSystem->addEntity(rectangle);
@@ -132,6 +171,9 @@ void Test_openGLContext::onAppInit(AppInitEvent* event) {
 	renderSystem->addEntity(circleRing);
 	renderSystem->addEntity(plane);
 	renderSystem->addEntity(cube);
+	renderSystem->addEntity(cylinder);
+	renderSystem->addEntity(hollowCylinder);
+	renderSystem->addEntity(cone);
 }
 
 void Test_openGLContext::onAppCleanUp(AppCleanUpEvent* event) {
@@ -142,6 +184,8 @@ void Test_openGLContext::onAppCleanUp(AppCleanUpEvent* event) {
 
 	delete plane;
 	delete cube;
+	delete cylinder;
+	delete hollowCylinder;
 }
 
 void Test_openGLContext::onWindowResize(WindowResizeEvent* event) {

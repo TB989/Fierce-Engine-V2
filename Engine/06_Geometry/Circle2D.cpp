@@ -6,5 +6,5 @@ void Circle2D::getVertices(std::vector<float>& vertices, int numPoints, float an
 }
 
 void Circle2D::getIndices(std::vector<unsigned int>& indices, int numPoints, float angle, float innerRadius) {
-	addCircleIndices(indices, numPoints, angle, 0, 1);
+	addCircleIndices(indices, numPoints, angle, 0, 1,false);
 }

@@ -6,5 +6,5 @@ void CircleRing2D::getVertices(std::vector<float>& vertices, int numPoints, floa
 }
 
 void CircleRing2D::getIndices(std::vector<unsigned int>& indices, int numPoints, float angle, float innerRadius) {
-	addCircleRingIndices(indices,numPoints,angle,0,numPoints);
+	addCircleRingIndices(indices,numPoints,angle,0,numPoints,false);
 }

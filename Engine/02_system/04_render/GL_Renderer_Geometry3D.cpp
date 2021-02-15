@@ -44,5 +44,90 @@ void GL_Renderer_Geometry3D::renderEntity(Entity3D* entity) {
 			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 			mesh->render(i*6, 6);
 		}
+		break;
+	case CYLINDER:
+		if (geo->getAngle() == 360.0f) {
+			count = geo->getNumPoints();
+		}
+		else {
+			count = geo->getNumPoints() - 1;
+		}
+
+		color = colors->getNextColor();
+		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		mesh->render(0, 3*count);
+		color = colors->getNextColor();
+		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		mesh->render(3 * count, 3 * count);
+		color = colors->getNextColor();
+		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		mesh->render(6 * count, 6 * count);
+
+		if (geo->getAngle() != 360.0f) {
+			color = colors->getNextColor();
+			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			mesh->render(12*count, 6);
+			color = colors->getNextColor();
+			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			mesh->render(12 * count+6, 6);
+		}
+
+		break;
+	case HOLLOW_CYLINDER:
+		if (geo->getAngle() == 360.0f) {
+			count = geo->getNumPoints();
+		}
+		else {
+			count = geo->getNumPoints() - 1;
+		}
+
+		color = colors->getNextColor();
+		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		mesh->render(0, 6 * count);
+		color = colors->getNextColor();
+		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		mesh->render(6 * count, 6 * count);
+		color = colors->getNextColor();
+		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		mesh->render(12 * count, 6 * count);
+		color = colors->getNextColor();
+		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		mesh->render(18 * count, 6 * count);
+
+		if (geo->getAngle() != 360.0f) {
+			color = colors->getNextColor();
+			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			mesh->render(24 * count, 6);
+			color = colors->getNextColor();
+			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			mesh->render(24 * count + 6, 6);
+		}
+
+		break;
+	case CONE:
+		if (geo->getAngle() == 360.0f) {
+			count = geo->getNumPoints();
+		}
+		else {
+			count = geo->getNumPoints() - 1;
+		}
+
+		color = colors->getNextColor();
+		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		mesh->render(0, 3 * count);
+		color = colors->getNextColor();
+		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		mesh->render(3 * count, 3 * count);
+
+		if (geo->getAngle() != 360.0f) {
+			color = colors->getNextColor();
+			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			mesh->render(6 * count, 3);
+			color = colors->getNextColor();
+			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			mesh->render(6 * count + 3, 3);
+		}
+
+		break;
 	}
 }

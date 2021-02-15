@@ -21,8 +21,12 @@ enum GeometryType {
 	CIRCLE,
 	CIRCLE_RING,
 	TRIANGLE,
+
 	PLANE,
-	CUBE
+	CUBE,
+	CYLINDER,
+	HOLLOW_CYLINDER,
+	CONE
 };
 
 class Geometry {
@@ -30,10 +34,10 @@ public:
 	virtual void getVertices(std::vector<float>& vertices, int numPoints, float angle, float innerRadius) = 0;
 	virtual void getIndices(std::vector<unsigned int>& indices, int numPoints, float angle, float innerRadius) = 0;
 protected:
-	void addTriangleIndices(std::vector<unsigned int>& indices, int i1, int i2, int i3);
-	void addQuadIndices(std::vector<unsigned int>& indices, int i1, int i2, int i3, int i4);
-	void addCircleIndices(std::vector<unsigned int>& indices, int numPoints, float angle, int center, int start);
-	void addCircleRingIndices(std::vector<unsigned int>& indices, int numPoints, float angle, int center, int start);
+	void addTriangleIndices(std::vector<unsigned int>& indices, int i1, int i2, int i3,bool flip);
+	void addQuadIndices(std::vector<unsigned int>& indices, int i1, int i2, int i3, int i4, bool flip);
+	void addCircleIndices(std::vector<unsigned int>& indices, int numPoints, float angle, int center, int start, bool flip);
+	void addCircleRingIndices(std::vector<unsigned int>& indices, int numPoints, float angle, int center, int start, bool flip);
 };
 
 class Geometry2D:public Geometry{
@@ -79,6 +83,24 @@ public:
 };
 
 class Cube3D :public Geometry3D {
+public:
+	void getVertices(std::vector<float>& vertices, int numPoints, float angle, float innerRadius);
+	void getIndices(std::vector<unsigned int>& indices, int numPoints, float angle, float innerRadius);
+};
+
+class Cylinder3D :public Geometry3D {
+public:
+	void getVertices(std::vector<float>& vertices, int numPoints, float angle, float innerRadius);
+	void getIndices(std::vector<unsigned int>& indices, int numPoints, float angle, float innerRadius);
+};
+
+class HollowCylinder3D :public Geometry3D {
+public:
+	void getVertices(std::vector<float>& vertices, int numPoints, float angle, float innerRadius);
+	void getIndices(std::vector<unsigned int>& indices, int numPoints, float angle, float innerRadius);
+};
+
+class Cone3D :public Geometry3D {
 public:
 	void getVertices(std::vector<float>& vertices, int numPoints, float angle, float innerRadius);
 	void getIndices(std::vector<unsigned int>& indices, int numPoints, float angle, float innerRadius);
