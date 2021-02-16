@@ -57,11 +57,12 @@ private:
 
 class ComponentGeometry :public Component {
 public:
-	ComponentGeometry(GeometryType type,int numPoints,float angle,float innerRadius) {
+	ComponentGeometry(GeometryType type,int numPoints,float angle,float innerRadius,int numRings) {
 		m_type = type;
 		m_numPoints = numPoints;
 		m_angle = angle;
 		m_innerRadius = innerRadius;
+		m_numRings = numRings;
 	}
 
 	ComponentType getComponentType() { return ComponentType::GEOMETRY; }
@@ -70,11 +71,13 @@ public:
 	int getNumPoints() { return m_numPoints; }
 	float getAngle() { return m_angle; }
 	float getInnerRadius() { return m_innerRadius; }
+	float getNumRings() { return m_numRings; }
 private :
 	GeometryType m_type;
 	int m_numPoints;
 	float m_angle;
 	float m_innerRadius;
+	int m_numRings;
 };
 
 class ComponentMaterialColor :public Component {

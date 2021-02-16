@@ -129,5 +129,35 @@ void GL_Renderer_Geometry3D::renderEntity(Entity3D* entity) {
 		}
 
 		break;
+	case SPHERE:
+		if (geo->getAngle() == 360.0f) {
+			count = geo->getNumPoints();
+		}
+		else {
+			count = geo->getNumPoints() - 1;
+		}
+
+		int counter = 0;
+
+		//Circle
+		color = colors->getNextColor();
+		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		mesh->render(counter, 3 * count);
+		counter += 3 * count;
+
+		//Circle rings
+		for (int i = 0;i<geo->getNumRings()-1;i++) {
+			color = colors->getNextColor();
+			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			mesh->render(counter, 6 * count);
+			counter += 6 * count;
+		}
+
+		//Circle
+		color = colors->getNextColor();
+		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		mesh->render(counter, 3 * count);
+
+		break;
 	}
 }

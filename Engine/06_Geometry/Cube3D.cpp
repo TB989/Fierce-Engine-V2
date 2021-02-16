@@ -1,6 +1,6 @@
 #include "Geometry.h"
 
-void Cube3D::getVertices(std::vector<float>& vertices, int numPoints, float angle, float innerRadius) {
+void Cube3D::getVertices(std::vector<float>& vertices, int numPoints, float angle, float innerRadius, int numRings) {
 	addVertex3D(vertices, -0.5f, -0.5f,  0.5f);
 	addVertex3D(vertices,  0.5f, -0.5f,  0.5f);
 	addVertex3D(vertices,  0.5f, -0.5f, -0.5f);
@@ -12,7 +12,7 @@ void Cube3D::getVertices(std::vector<float>& vertices, int numPoints, float angl
 	addVertex3D(vertices, -0.5f,  0.5f, -0.5f);
 }
 
-void Cube3D::getIndices(std::vector<unsigned int>& indices, int numPoints, float angle, float innerRadius) {
+void Cube3D::getIndices(std::vector<unsigned int>& indices, int numPoints, float angle, float innerRadius, int numRings) {
 	//Bottom
 	addQuadIndices(indices, 3, 2, 1, 0,false);
 

@@ -1,8 +1,5 @@
 #include "Geometry.h"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
-
 void Geometry2D::addVertex2D(std::vector<float>& vertices,float x,float y){
 	vertices.push_back(x);
 	vertices.push_back(y);
@@ -117,7 +114,7 @@ void Geometry::addCircleRingIndices(std::vector<unsigned int>& indices, int numP
 			indices.push_back(start2);
 			indices.push_back(start1 + numPoints - 1);
 			indices.push_back(start1);
-
+			
 			//Second triangle
 			indices.push_back(start2 + numPoints - 1);
 			indices.push_back(start1 + numPoints - 1);

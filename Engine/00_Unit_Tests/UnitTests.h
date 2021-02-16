@@ -63,6 +63,7 @@ private:
 	Entity3D* cylinder = nullptr;
 	Entity3D* hollowCylinder = nullptr;
 	Entity3D* cone = nullptr;
+	Entity3D* sphere = nullptr;
 };
 
 class Test_math : public Core {
