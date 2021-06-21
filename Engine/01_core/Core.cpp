@@ -16,7 +16,7 @@
 
 Core::Core() {
 	Loggers::CORE->info("Loading engine settings.");
-	std::map<std::string, std::string> settings = Parser::parsePropertiesFile("C:/Users/Tobias/Desktop/GameEngine/Engine/Engine.ini");
+	std::map<std::string, std::string> settings = Parser::parsePropertiesFile("C:/Users/Tobias/Desktop/FierceEngine/Engine/Engine.ini");
 	m_settings.parse(settings);
 	
 	Loggers::CORE->info("Starting event system.");
@@ -29,7 +29,13 @@ Core::Core() {
 Core::~Core() {
 	if (m_settings.windowMode != HEADLESS) {
 		Loggers::CORE->info("Stopping render system.");
-		delete renderSystem;
+		switch (m_settings.api) {
+		case API::OPEN_GL:
+			delete renderSystem;
+			break;
+		case API::VULKAN:
+			break;
+		}
 
 		Loggers::CORE->info("Stopping window system.");
 		delete windowSystem;
@@ -51,7 +57,9 @@ void Core::run() {
 	while (running) {
 		m_window->pollEvents();
 		coreUpdate();
-		renderSystem->render();
+		if (m_settings.api == API::OPEN_GL) {
+			renderSystem->render();
+		}
 		coreRender();
 	}
 	coreCleanUp();
@@ -68,7 +76,13 @@ void Core::coreInit() {
 		camera->setTransform(new Transform3D(0, 2, 0, 1,1,1, 0, 0, 0));
 
 		Loggers::CORE->info("Starting render system.");
-		renderSystem = new GL_RenderSystem(this, &m_settings,camera);
+		switch (m_settings.api) {
+		case API::OPEN_GL:
+			renderSystem = new GL_RenderSystem(this, &m_settings, camera);
+			break;
+		case API::VULKAN:
+			break;
+		}
 	}
 
 	Loggers::CORE->info("Starting engine.");

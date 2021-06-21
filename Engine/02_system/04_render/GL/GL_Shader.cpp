@@ -4,7 +4,7 @@
 
 #include <fstream>
 
-const std::string GL_Shader::SHADER_LIBRARY = "C:/Users/Tobias/Desktop/GameEngine/Engine/xx_ressources/shaders/openGL/";
+const std::string GL_Shader::SHADER_LIBRARY = "C:/Users/Tobias/Desktop/FierceEngine/Engine/xx_ressources/shaders/openGL/";
 
 GL_Shader::GL_Shader(std::string path){
 	type = getType(path);

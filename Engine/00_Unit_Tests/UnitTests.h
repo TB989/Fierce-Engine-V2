@@ -71,3 +71,16 @@ public:
 	Test_math();
 	void onAppInit(AppInitEvent* event);
 };
+
+class VK_Instance;
+class VK_Debug;
+
+class Test_vulkan : public Core {
+public:
+	Test_vulkan();
+	void onAppInit(AppInitEvent* event);
+	void onAppCleanUp(AppCleanUpEvent* event);
+private:
+	VK_Instance* instance;
+	VK_Debug* debug;
+};
