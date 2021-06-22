@@ -73,7 +73,7 @@ public:
 };
 
 class VK_Instance;
-class VK_Debug;
+class VK_Device;
 
 class Test_vulkan : public Core {
 public:
@@ -82,5 +82,5 @@ public:
 	void onAppCleanUp(AppCleanUpEvent* event);
 private:
 	VK_Instance* instance;
-	VK_Debug* debug;
+	VK_Device* device;
 };

@@ -8,12 +8,14 @@
 
 VK_Instance::VK_Instance(EngineSettings* settings) {
     API_VERSION= VK_MAKE_VERSION(settings->apiVersionMajor, settings->apiVersionMinor, 0);
-    createInfo.pNext = nullptr;
     getSupportedExtensions();
     getSupportedValidationLayers();
 }
 
 VK_Instance::~VK_Instance() {
+    if (isDebugSupported) {
+        vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+    }
     vkDestroyInstance(instance, nullptr);
 }
 
@@ -36,6 +38,7 @@ void VK_Instance::addDesiredValidationLayer(const char* layer){
 void VK_Instance::create(){
     checkExtensionSupport();
     checkValidationLayerSupport();
+    isDebugSupported = checkDebugSupport();
 
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -46,7 +49,9 @@ void VK_Instance::create(){
     appInfo.engineVersion = ENGINE_VERSION;
     appInfo.apiVersion = API_VERSION;
 
+    VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    createInfo.pNext = nullptr;
     createInfo.flags = 0;
     createInfo.pApplicationInfo = &appInfo;
     if (enabledExtensions.empty()) {
@@ -66,15 +71,34 @@ void VK_Instance::create(){
         createInfo.ppEnabledLayerNames = enabledValidationLayers.data();
     }
 
-    CHECK_VK(vkCreateInstance(&createInfo, nullptr, &instance), "Failed to create instance.");
+    if (isDebugSupported) {
+        Loggers::VK->info("Debug messenger is active.");
+
+        VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+        debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+        debugCreateInfo.pNext = nullptr;
+        debugCreateInfo.flags = 0;
+        debugCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+        debugCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+        debugCreateInfo.pfnUserCallback = debugCallback;
+        debugCreateInfo.pUserData = nullptr;
+
+        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
+        CHECK_VK(vkCreateInstance(&createInfo, nullptr, &instance), "Failed to create instance.");
+
+        vkCreateDebugUtilsMessengerEXT = loadCreateFunctionPointer(instance);
+        vkDestroyDebugUtilsMessengerEXT = loadDestroyFunctionPointer(instance);
+
+        CHECK_VK(vkCreateDebugUtilsMessengerEXT(instance, &debugCreateInfo, nullptr, &debugMessenger), "Failed to create debug messenger.");
+    }
+    else {
+        Loggers::VK->info("Debug messenger is not active.");
+        CHECK_VK(vkCreateInstance(&createInfo, nullptr, &instance), "Failed to create instance.");
+    }
 }
 
 VkInstance VK_Instance::getId(){
     return instance;
-}
-
-void VK_Instance::linkDebug(VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo){
-    createInfo.pNext= (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
 }
 
 void VK_Instance::printSupportedExtensions(){
@@ -142,6 +166,15 @@ void VK_Instance::checkExtensionSupport(){
     }
 }
 
+bool VK_Instance::checkDebugSupport(){
+    for (const auto& extension : enabledExtensions) {
+        if (strcmp(extension, VK_EXT_DEBUG_UTILS_EXTENSION_NAME) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void VK_Instance::getSupportedValidationLayers(){
     uint32_t layerCount = 0;
     CHECK_VK(vkEnumerateInstanceLayerProperties(&layerCount, nullptr), "Failed to enumerate instance validation layers.");
@@ -177,4 +210,29 @@ void VK_Instance::checkValidationLayerSupport(){
             Loggers::VK->warn("Desired instance validation layer %s is not supported.", layer);
         }
     }
+}
+
+PFN_vkCreateDebugUtilsMessengerEXT VK_Instance::loadCreateFunctionPointer(VkInstance instance) {
+    PFN_vkCreateDebugUtilsMessengerEXT func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+
+    if (func == nullptr) {
+        CHECK_VK(VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to load function pointer for vkCreateDebugUtilsMessengerEXT.");
+        return nullptr;
+    }
+    return func;
+}
+
+PFN_vkDestroyDebugUtilsMessengerEXT VK_Instance::loadDestroyFunctionPointer(VkInstance instance) {
+    PFN_vkDestroyDebugUtilsMessengerEXT func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+
+    if (func == nullptr) {
+        CHECK_VK(VK_ERROR_EXTENSION_NOT_PRESENT, "Failed to load function pointer for vkDestroyDebugUtilsMessengerEXT.");
+        return nullptr;
+    }
+    return func;
+}
+
+VKAPI_ATTR VkBool32 VKAPI_CALL VK_Instance::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
+    Loggers::VK->error("%s", pCallbackData->pMessage);
+    return VK_FALSE;
 }
