@@ -4,6 +4,7 @@
 
 #include "02_system/04_render/VK/VK_Instance.h"
 #include "02_system/04_render/VK/VK_Device.h"
+#include "02_system/04_render/VK/VK_Presentation.h"
 
 Test_vulkan::Test_vulkan() {
 	eventSystem->addListener(this, &Test_vulkan::onAppInit);
@@ -20,15 +21,22 @@ void Test_vulkan::onAppInit(AppInitEvent* event) {
 	instance->printEnabledExtensions();
 	instance->printEnabledValidationLayers();
 
-	device = new VK_Device(instance->getId());
+	presentation = new VK_Presentation(this, instance->getId());
+	presentation->createSurface();
+
+	device = new VK_Device(instance->getId(),presentation->getSurface());
 	device->addRequiredExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 	device->addDesiredValidationLayer("VK_LAYER_KHRONOS_validation");
 	device->create();
 	device->printEnabledExtensions();
 	device->printEnabledValidationLayers();
+
+	presentation->createSwapchain(device);
 }
 
 void Test_vulkan::onAppCleanUp(AppCleanUpEvent* event) {
+	presentation->destroySwapchain();
 	delete device;
+	delete presentation;
 	delete instance;
 }

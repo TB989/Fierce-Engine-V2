@@ -20,7 +20,7 @@
 
 class VK_Device{
 public:
-	VK_Device(VkInstance instance);
+	VK_Device(VkInstance instance, VkSurfaceKHR surface);
 	~VK_Device();
 
 public:
@@ -37,9 +37,20 @@ public:
 	void printSupportedValidationLayers();
 	void printEnabledValidationLayers();
 
+	VkDevice getDevice() { return device; }
+
+	VkSurfaceFormatKHR getSurfaceFormat(){ return surfaceFormat; }
+	VkPresentModeKHR getPresentMode() { return presentMode; }
+	VkExtent2D getExtent() {return extent;}
+	uint32_t getNumberOfImages() { return imageCount; }
+	VkSurfaceTransformFlagBitsKHR getSurfaceTransform(){ return surfaceTransform; }
+
 private:
 	void choosePhysicalDevice();
 	bool isDeviceSuitable(VkPhysicalDevice device);
+	VkBool32 supportsPresent(VkPhysicalDevice physicalDevice,int queueIndex);
+	bool checkSwapchainSupport(VkPhysicalDevice physicalDevice);
+	bool chooseSwapchainSettings(VkSurfaceCapabilitiesKHR surfaceCapabilities, std::vector<VkSurfaceFormatKHR> formats, std::vector<VkPresentModeKHR> presentModes);
 	void createLogicalDevice();
 
 private:
@@ -53,10 +64,17 @@ private:
 
 private:
 	VkInstance m_instance;
-	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-	int queueFamilyIndex;
+	VkSurfaceKHR m_surface;
+	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
+	int queueFamilyIndex=-1;
 	VkDevice device;
 	VkQueue graphicsQueue;
+
+	VkSurfaceFormatKHR surfaceFormat;
+	VkPresentModeKHR presentMode;
+	VkExtent2D extent;
+	uint32_t imageCount;
+	VkSurfaceTransformFlagBitsKHR surfaceTransform;
 
 private:
 	std::vector<VkExtensionProperties> supportedExtensions;

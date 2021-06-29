@@ -74,6 +74,7 @@ public:
 
 class VK_Instance;
 class VK_Device;
+class VK_Presentation;
 
 class Test_vulkan : public Core {
 public:
@@ -83,4 +84,5 @@ public:
 private:
 	VK_Instance* instance;
 	VK_Device* device;
+	VK_Presentation* presentation;
 };

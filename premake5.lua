@@ -32,6 +32,11 @@ project "Engine"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 	
+	defines
+	{
+		"VK_USE_PLATFORM_WIN32_KHR"
+	}
+
 	files
 	{
 		"%{prj.name}/**.h",

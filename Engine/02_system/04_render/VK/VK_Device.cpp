@@ -3,8 +3,10 @@
 #include "01_core/errorHandling/Exceptions.h"
 #include "02_system/01_logging/Logger.h"
 
-VK_Device::VK_Device(VkInstance instance){
+VK_Device::VK_Device(VkInstance instance, VkSurfaceKHR surface){
     m_instance = instance;
+    m_surface = surface;
+
     choosePhysicalDevice();
 	getSupportedExtensions();
 	getSupportedValidationLayers();
@@ -78,12 +80,12 @@ void VK_Device::choosePhysicalDevice(){
 
     for (VkPhysicalDevice device : devices) {
         if (isDeviceSuitable(device)) {
-            physicalDevice = device;
+            m_physicalDevice = device;
             break;
         }
     }
 
-    if (physicalDevice == VK_NULL_HANDLE) {
+    if (m_physicalDevice == VK_NULL_HANDLE) {
         CHECK_VK(VK_ERROR_INCOMPATIBLE_DRIVER, "No graphics card supports all features needed to run this engine.");
     }
 }
@@ -101,15 +103,86 @@ bool VK_Device::isDeviceSuitable(VkPhysicalDevice device){
     std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
     vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
+    VkSurfaceCapabilitiesKHR surfaceCapabilities;
+    CHECK_VK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface, &surfaceCapabilities),"Failed to get surface capabilities.");
+    uint32_t formatCount;
+    CHECK_VK(vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, nullptr),"Failed to get surface formats.");
+    std::vector<VkSurfaceFormatKHR> formats(formatCount);
+    CHECK_VK(vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, formats.data()), "Failed to get surface formats.");
+    uint32_t presentModeCount;
+    CHECK_VK(vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount, nullptr),"Failed to get present modes.");
+    std::vector<VkPresentModeKHR> presentModes(presentModeCount);
+    CHECK_VK(vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount, presentModes.data()), "Failed to get present modes.");
+
+    //Check queues
     int i = 0;
     for (VkQueueFamilyProperties queueFamily : queueFamilies) {
-        if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+        if ((queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)&&supportsPresent(device,i)) {
             queueFamilyIndex = i;
-            return true;
+            break;
         }
         i++;
     }
+    if (queueFamilyIndex==-1) {
+        return false;
+    }
+
+    //Check swapchain
+    //checkSwapchainSupport(device)
+
+    if (!chooseSwapchainSettings(surfaceCapabilities, formats, presentModes)) {
+        return false;
+    }
+
+    return true;
+}
+
+VkBool32 VK_Device::supportsPresent(VkPhysicalDevice physicalDevice,int queueIndex){
+    VkBool32 presentSupport = false;
+    CHECK_VK(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueIndex, m_surface, &presentSupport), "Failed to check presentation support.");
+    return presentSupport;
+}
+
+bool VK_Device::checkSwapchainSupport(VkPhysicalDevice physicalDevice){
+    for (const auto& extension : enabledExtensions) {
+        if (strcmp(extension, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {
+            return true;
+        }
+    }
     return false;
+}
+
+bool VK_Device::chooseSwapchainSettings(VkSurfaceCapabilitiesKHR capabilities,std::vector<VkSurfaceFormatKHR> formats, std::vector<VkPresentModeKHR> presentModes){
+    //Check surface format
+    for (const auto& availableFormat : formats) {
+        if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+            surfaceFormat = availableFormat;
+        }
+    }
+
+    //Check present mode
+    for (const auto& availablePresentMode : presentModes) {
+        if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+            presentMode=availablePresentMode;
+        }
+    }
+
+    //Check swapchain extent
+    extent = capabilities.currentExtent;
+    extent.width = max(extent.width, capabilities.minImageExtent.width);
+    extent.width = min(extent.width, capabilities.maxImageExtent.width);
+    extent.height = max(extent.height, capabilities.minImageExtent.height);
+    extent.height = min(extent.height, capabilities.maxImageExtent.height);
+
+    //Check number of images
+    imageCount = capabilities.minImageCount + 1;
+    if (capabilities.maxImageCount > 0 && imageCount > capabilities.maxImageCount) {
+        imageCount = capabilities.maxImageCount;
+    }
+
+    surfaceTransform = capabilities.currentTransform;
+
+    return true;
 }
 
 void VK_Device::createLogicalDevice(){
@@ -145,14 +218,14 @@ void VK_Device::createLogicalDevice(){
         createInfo.ppEnabledLayerNames = enabledValidationLayers.data();
     }
 
-    CHECK_VK(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device), "Failed to create logical device.");
+    CHECK_VK(vkCreateDevice(m_physicalDevice, &createInfo, nullptr, &device), "Failed to create logical device.");
 }
 
 void VK_Device::getSupportedExtensions() {
     uint32_t extensionCount = 0;
-    CHECK_VK(vkEnumerateDeviceExtensionProperties(physicalDevice,nullptr, &extensionCount, nullptr), "Failed to enumerate device extensions.");
+    CHECK_VK(vkEnumerateDeviceExtensionProperties(m_physicalDevice,nullptr, &extensionCount, nullptr), "Failed to enumerate device extensions.");
     supportedExtensions.resize(extensionCount);
-    CHECK_VK(vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, supportedExtensions.data()), "Failed to enumerate device extensions.");
+    CHECK_VK(vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, supportedExtensions.data()), "Failed to enumerate device extensions.");
 }
 
 bool VK_Device::isExtensionSupported(const char* extensionName) {
@@ -187,9 +260,9 @@ void VK_Device::checkExtensionSupport() {
 
 void VK_Device::getSupportedValidationLayers() {
     uint32_t layerCount = 0;
-    CHECK_VK(vkEnumerateDeviceLayerProperties(physicalDevice, &layerCount, nullptr), "Failed to enumerate device validation layers.");
+    CHECK_VK(vkEnumerateDeviceLayerProperties(m_physicalDevice, &layerCount, nullptr), "Failed to enumerate device validation layers.");
     supportedValidationLayers.resize(layerCount);
-    CHECK_VK(vkEnumerateDeviceLayerProperties(physicalDevice, &layerCount, supportedValidationLayers.data()), "Failed to enumerate device validation layers.");
+    CHECK_VK(vkEnumerateDeviceLayerProperties(m_physicalDevice, &layerCount, supportedValidationLayers.data()), "Failed to enumerate device validation layers.");
 }
 
 bool VK_Device::isValidationlayerSupported(const char* layerName) {
