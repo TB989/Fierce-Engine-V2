@@ -5,6 +5,7 @@
 #include "02_system/04_render/VK/VK_Instance.h"
 #include "02_system/04_render/VK/VK_Device.h"
 #include "02_system/04_render/VK/VK_Presentation.h"
+#include "02_system/04_render/VK/VK_Pipeline.h"
 
 Test_vulkan::Test_vulkan() {
 	eventSystem->addListener(this, &Test_vulkan::onAppInit);
@@ -32,9 +33,12 @@ void Test_vulkan::onAppInit(AppInitEvent* event) {
 	device->printEnabledValidationLayers();
 
 	presentation->createSwapchain(device);
+
+	pipeline = new VK_Pipeline(device);
 }
 
 void Test_vulkan::onAppCleanUp(AppCleanUpEvent* event) {
+	delete pipeline;
 	presentation->destroySwapchain();
 	delete device;
 	delete presentation;

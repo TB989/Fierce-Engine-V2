@@ -10,6 +10,7 @@
 #include "vulkan/vulkan.h"
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <vector>
 
 /* Forward declarations: 
 *  -Pointers:  Pointer* myPointer;
@@ -40,6 +41,9 @@ private:
 	HWND windowHandle = nullptr;
 	VkSurfaceKHR surface;
 	VkSwapchainKHR swapChain;
+
+	std::vector<VkImage> swapChainImages;
+	std::vector<VkImageView> swapChainImageViews;
 
 private:
 	void onHandleReceived(WindowSendHandleEvent* evt);
