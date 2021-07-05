@@ -5,6 +5,7 @@
 #include "02_system/04_render/VK/VK_Instance.h"
 #include "02_system/04_render/VK/VK_Device.h"
 #include "02_system/04_render/VK/VK_Presentation.h"
+#include "02_system/04_render/VK/VK_Renderpass.h"
 #include "02_system/04_render/VK/VK_Pipeline.h"
 
 Test_vulkan::Test_vulkan() {
@@ -34,11 +35,14 @@ void Test_vulkan::onAppInit(AppInitEvent* event) {
 
 	presentation->createSwapchain(device);
 
-	pipeline = new VK_Pipeline(device);
+	renderpass = new VK_Renderpass(device);
+
+	pipeline = new VK_Pipeline(device,renderpass);
 }
 
 void Test_vulkan::onAppCleanUp(AppCleanUpEvent* event) {
 	delete pipeline;
+	delete renderpass;
 	presentation->destroySwapchain();
 	delete device;
 	delete presentation;

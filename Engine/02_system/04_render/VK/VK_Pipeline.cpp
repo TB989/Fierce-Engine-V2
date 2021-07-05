@@ -3,7 +3,7 @@
 #include "01_core/errorHandling/Exceptions.h"
 #include <fstream>
 
-VK_Pipeline::VK_Pipeline(VK_Device* device){
+VK_Pipeline::VK_Pipeline(VK_Device* device, VK_Renderpass* renderpass){
     m_device = device->getDevice();
 
     loadShaders();
@@ -15,10 +15,11 @@ VK_Pipeline::VK_Pipeline(VK_Device* device){
     createRasterizer();
     createMultisampling();
     createColorBlending();
-    createPipeline();
+    createPipeline(renderpass->getRenderpass());
 }
 
 VK_Pipeline::~VK_Pipeline(){
+    vkDestroyPipeline(m_device, graphicsPipeline, nullptr);
     vkDestroyPipelineLayout(m_device, pipelineLayout, nullptr);
     vkDestroyShaderModule(m_device, shaderModuleVert, nullptr);
     vkDestroyShaderModule(m_device, shaderModuleFrag, nullptr);
@@ -182,7 +183,7 @@ void VK_Pipeline::createColorBlending(){
     colorBlending.blendConstants[3] = 0.0f; // Optional
 }
 
-void VK_Pipeline::createPipeline(){
+void VK_Pipeline::createPipeline(VkRenderPass renderpass){
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.pNext = nullptr;
     pipelineLayoutInfo.flags = 0;
@@ -193,4 +194,26 @@ void VK_Pipeline::createPipeline(){
     pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
 
     CHECK_VK(vkCreatePipelineLayout(m_device, &pipelineLayoutInfo, nullptr, &pipelineLayout),"Failed to create pipeline layout.");
+
+    VkGraphicsPipelineCreateInfo pipelineInfo{};
+    pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    pipelineInfo.pNext = nullptr;
+    pipelineInfo.flags = 0;
+    pipelineInfo.stageCount = 2;
+    pipelineInfo.pStages = shaderStages;
+    pipelineInfo.pVertexInputState = &vertexInputInfo;
+    pipelineInfo.pInputAssemblyState = &inputAssembly;
+    pipelineInfo.pViewportState = &viewportState;
+    pipelineInfo.pRasterizationState = &rasterizer;
+    pipelineInfo.pMultisampleState = &multisampling;
+    pipelineInfo.pDepthStencilState = nullptr; // Optional
+    pipelineInfo.pColorBlendState = &colorBlending;
+    pipelineInfo.pDynamicState = nullptr; // Optional
+    pipelineInfo.layout = pipelineLayout;
+    pipelineInfo.renderPass = renderpass;
+    pipelineInfo.subpass = 0;
+    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
+    pipelineInfo.basePipelineIndex = -1; // Optional
+
+    CHECK_VK(vkCreateGraphicsPipelines(m_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline),"Failed to create graphics pipeline.");
 }

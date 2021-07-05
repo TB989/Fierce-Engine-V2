@@ -5,7 +5,7 @@
 *  -Objects: Object myObject;
 */
 #include "02_system/04_render/VK/VK_Device.h"
-
+#include "02_system/04_render/VK/VK_Renderpass.h"
 
 /* SystemIncludes*/
 #include "vulkan/vulkan.h"
@@ -21,7 +21,7 @@
 
 class VK_Pipeline{
 public:
-	VK_Pipeline(VK_Device* device);
+	VK_Pipeline(VK_Device* device,VK_Renderpass* renderpass);
 	~VK_Pipeline();
 
 private:
@@ -45,8 +45,8 @@ private:
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 	VkPipelineColorBlendStateCreateInfo colorBlending{};
 
-
 	VkPipelineLayout pipelineLayout;
+	VkPipeline graphicsPipeline;
 
 private:
 	void loadShaders();
@@ -58,5 +58,5 @@ private:
 	void createRasterizer();
 	void createMultisampling();
 	void createColorBlending();
-	void createPipeline();
+	void createPipeline(VkRenderPass renderpass);
 };
