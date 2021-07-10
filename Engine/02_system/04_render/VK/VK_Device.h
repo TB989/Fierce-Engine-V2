@@ -17,6 +17,9 @@
 *              Pointer* MyFunction(Pointer* myPointer);
 *              Reference& MyFunction(Reference& myReference);
 */
+class VK_Renderpass;
+class VK_Framebuffers;
+class VK_Pipeline;
 
 class VK_Device{
 public:
@@ -38,12 +41,18 @@ public:
 	void printEnabledValidationLayers();
 
 	VkDevice getDevice() { return device; }
+	VkQueue getQueue() { return graphicsQueue; }
 
 	VkSurfaceFormatKHR getSurfaceFormat(){ return surfaceFormat; }
 	VkPresentModeKHR getPresentMode() { return presentMode; }
 	VkExtent2D getExtent() {return extent;}
 	uint32_t getNumberOfImages() { return imageCount; }
 	VkSurfaceTransformFlagBitsKHR getSurfaceTransform(){ return surfaceTransform; }
+
+	void createCommandPool();
+	void createCommandBuffers(int numBuffers);
+	void recordCommandBuffers(VK_Renderpass* renderpass,VK_Framebuffers* framebuffers,VK_Pipeline* pipeline);
+	VkCommandBuffer getCommandBuffer(int index) { return commandBuffers[index]; }
 
 private:
 	void choosePhysicalDevice();
@@ -75,6 +84,9 @@ private:
 	VkExtent2D extent;
 	uint32_t imageCount;
 	VkSurfaceTransformFlagBitsKHR surfaceTransform;
+
+	VkCommandPool commandPool;
+	std::vector<VkCommandBuffer> commandBuffers;
 
 private:
 	std::vector<VkExtensionProperties> supportedExtensions;

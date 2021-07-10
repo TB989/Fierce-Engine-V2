@@ -24,6 +24,8 @@ public:
 	VK_Pipeline(VK_Device* device,VK_Renderpass* renderpass);
 	~VK_Pipeline();
 
+	VkPipeline getPipeline() { return graphicsPipeline; }
+
 private:
 	VkDevice m_device;
 

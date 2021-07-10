@@ -3,6 +3,10 @@
 #include "01_core/errorHandling/Exceptions.h"
 #include "02_system/01_logging/Logger.h"
 
+#include "02_system/04_render/VK/VK_Renderpass.h"
+#include "02_system/04_render/VK/VK_Framebuffers.h"
+#include "02_system/04_render/VK/VK_Pipeline.h"
+
 VK_Device::VK_Device(VkInstance instance, VkSurfaceKHR surface){
     m_instance = instance;
     m_surface = surface;
@@ -13,6 +17,8 @@ VK_Device::VK_Device(VkInstance instance, VkSurfaceKHR surface){
 }
 
 VK_Device::~VK_Device() {
+    vkFreeCommandBuffers(device, commandPool, commandBuffers.size(), commandBuffers.data());
+    vkDestroyCommandPool(device, commandPool, nullptr);
     vkDestroyDevice(device, nullptr);
 }
 
@@ -66,6 +72,60 @@ void VK_Device::printEnabledValidationLayers() {
     Loggers::VK->info("### Number of enabled device validation layers: %i ###", enabledValidationLayers.size());
     for (const auto& layer : enabledValidationLayers) {
         Loggers::VK->info("\t%s", layer);
+    }
+}
+
+void VK_Device::createCommandPool(){
+    VkCommandPoolCreateInfo poolInfo{};
+    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    poolInfo.pNext = nullptr;
+    poolInfo.flags = 0;
+    poolInfo.queueFamilyIndex = queueFamilyIndex;
+
+    CHECK_VK(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool),"Failed to create command pool.");
+}
+
+void VK_Device::createCommandBuffers(int numBuffers){
+    commandBuffers.resize(numBuffers);
+
+    VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.pNext = nullptr;
+    allocInfo.commandPool = commandPool;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandBufferCount = (uint32_t)numBuffers;
+
+    CHECK_VK(vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()),"Failed to allocate command buffers.");
+}
+
+void VK_Device::recordCommandBuffers(VK_Renderpass* renderpass, VK_Framebuffers* framebuffers, VK_Pipeline* pipeline){
+    for (size_t i = 0; i < commandBuffers.size(); i++) {
+        VkCommandBufferBeginInfo beginInfo{};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.pNext = nullptr;
+        beginInfo.flags = 0; // Optional
+        beginInfo.pInheritanceInfo = nullptr; // Optional
+        CHECK_VK(vkBeginCommandBuffer(commandBuffers[i], &beginInfo),"Failed to begin recording command buffer.");
+
+        VkRenderPassBeginInfo renderPassInfo{};
+        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        renderPassInfo.pNext = nullptr;
+        renderPassInfo.renderPass = renderpass->getRenderpass();
+        renderPassInfo.framebuffer = framebuffers->getFramebuffer(i);
+        renderPassInfo.renderArea.offset = { 0, 0 };
+        renderPassInfo.renderArea.extent = extent;
+        VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+        renderPassInfo.clearValueCount = 1;
+        renderPassInfo.pClearValues = &clearColor;
+        vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+        vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->getPipeline());
+
+        vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+
+        vkCmdEndRenderPass(commandBuffers[i]);
+
+        CHECK_VK(vkEndCommandBuffer(commandBuffers[i]),"Failed to end recording command buffer.");
     }
 }
 

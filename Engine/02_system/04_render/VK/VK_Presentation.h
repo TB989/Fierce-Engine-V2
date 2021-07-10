@@ -34,6 +34,10 @@ public:
 	void destroySwapchain();
 
 	VkSurfaceKHR getSurface() { return surface; }
+	int getNumImages() { return swapChainImageViews.size(); }
+	VkImageView getImageView(int index) { return swapChainImageViews[index]; }
+
+	VkSwapchainKHR getSwapchain() { return swapChain; }
 
 private:
 	VkInstance m_instance;

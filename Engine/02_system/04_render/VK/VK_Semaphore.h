@@ -4,7 +4,6 @@
 *  -Parent class
 *  -Objects: Object myObject;
 */
-#include <02_system/04_render/VK/VK_Device.h>
 
 /* SystemIncludes*/
 #include "vulkan/vulkan.h"
@@ -16,15 +15,16 @@
 *              Pointer* MyFunction(Pointer* myPointer);
 *              Reference& MyFunction(Reference& myReference);
 */
+class VK_Device;
 
-class VK_Renderpass{
+class VK_Semaphore{
 public:
-	VK_Renderpass(VK_Device* device);
-	~VK_Renderpass();
+	VK_Semaphore(VK_Device* device);
+	~VK_Semaphore();
 
-	VkRenderPass getRenderpass() { return renderPass; }
+	VkSemaphore getSemaphore() { return semaphore; }
 
 private:
-	VkDevice m_device;
-	VkRenderPass renderPass;
+	VK_Device* m_device;
+	VkSemaphore semaphore;
 };

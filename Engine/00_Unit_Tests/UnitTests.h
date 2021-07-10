@@ -77,11 +77,14 @@ class VK_Device;
 class VK_Presentation;
 class VK_Renderpass;
 class VK_Pipeline;
+class VK_Framebuffers;
+class VK_Semaphore;
 
 class Test_vulkan : public Core {
 public:
 	Test_vulkan();
 	void onAppInit(AppInitEvent* event);
+	void onAppRender(AppRenderEvent* event);
 	void onAppCleanUp(AppCleanUpEvent* event);
 private:
 	VK_Instance* instance;
@@ -89,4 +92,7 @@ private:
 	VK_Presentation* presentation;
 	VK_Renderpass* renderpass;
 	VK_Pipeline* pipeline;
+	VK_Framebuffers* framebuffers;
+	VK_Semaphore* imageAvailableSemaphore;
+	VK_Semaphore* renderFinishedSemaphore;
 };
