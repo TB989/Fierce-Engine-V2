@@ -79,6 +79,7 @@ class VK_Renderpass;
 class VK_Pipeline;
 class VK_Framebuffers;
 class VK_Semaphore;
+class VK_Fence;
 
 class Test_vulkan : public Core {
 public:
@@ -87,12 +88,18 @@ public:
 	void onAppRender(AppRenderEvent* event);
 	void onAppCleanUp(AppCleanUpEvent* event);
 private:
+	size_t currentFrame = 0;
+	const int MAX_FRAMES_IN_FLIGHT = 2;
+
 	VK_Instance* instance;
 	VK_Device* device;
 	VK_Presentation* presentation;
 	VK_Renderpass* renderpass;
 	VK_Pipeline* pipeline;
 	VK_Framebuffers* framebuffers;
-	VK_Semaphore* imageAvailableSemaphore;
-	VK_Semaphore* renderFinishedSemaphore;
+
+	std::vector<VK_Semaphore*> imageAvailableSemaphores;
+	std::vector<VK_Semaphore*> renderFinishedSemaphores;
+	std::vector<VK_Fence*> inFlightFences;
+	std::vector<VK_Fence*> imagesInFlight;
 };

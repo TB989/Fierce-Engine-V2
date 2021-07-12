@@ -9,6 +9,7 @@
 #include "02_system/04_render/VK/VK_Pipeline.h"
 #include "02_system/04_render/VK/VK_Framebuffers.h"
 #include "02_system/04_render/VK/VK_Semaphore.h"
+#include "02_system/04_render/VK/VK_Fence.h"
 
 #include "01_core/errorHandling/Exceptions.h"
 
@@ -50,19 +51,35 @@ void Test_vulkan::onAppInit(AppInitEvent* event) {
 	device->createCommandBuffers(presentation->getNumImages());
 	device->recordCommandBuffers(renderpass,framebuffers,pipeline);
 
-	imageAvailableSemaphore = new VK_Semaphore(device);
-	renderFinishedSemaphore = new VK_Semaphore(device);
+	imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+	renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+	inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+	imagesInFlight.resize(presentation->getNumImages(),VK_NULL_HANDLE);
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		imageAvailableSemaphores[i]= new VK_Semaphore(device);
+		renderFinishedSemaphores[i]= new VK_Semaphore(device);
+		inFlightFences[i] = new VK_Fence(device);
+	}
 }
 
 void Test_vulkan::onAppRender(AppRenderEvent* event){
+	VkFence fence = inFlightFences[currentFrame]->getFence();
+	CHECK_VK(vkWaitForFences(device->getDevice(), 1, &fence, VK_TRUE, UINT64_MAX),"Failed to wait for fences.");
+
 	uint32_t imageIndex;
-	CHECK_VK(vkAcquireNextImageKHR(device->getDevice(), presentation->getSwapchain(), UINT64_MAX, imageAvailableSemaphore->getSemaphore(), VK_NULL_HANDLE, &imageIndex),"Failed to aquire image.");
+	CHECK_VK(vkAcquireNextImageKHR(device->getDevice(), presentation->getSwapchain(), UINT64_MAX, imageAvailableSemaphores[currentFrame]->getSemaphore(), VK_NULL_HANDLE, &imageIndex),"Failed to aquire image.");
+
+	if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
+		VkFence fence1 = imagesInFlight[imageIndex]->getFence();
+		CHECK_VK(vkWaitForFences(device->getDevice(), 1, &fence1, VK_TRUE, UINT64_MAX), "Failed to wait for fences.");
+	}
+	imagesInFlight[imageIndex] = inFlightFences[currentFrame];
 
 	VkCommandBuffer buffer = device->getCommandBuffer(imageIndex);
 
-	VkSemaphore waitSemaphores[] = { imageAvailableSemaphore->getSemaphore() };
+	VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame]->getSemaphore() };
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-	VkSemaphore signalSemaphores[] = { renderFinishedSemaphore->getSemaphore() };
+	VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame ]->getSemaphore()};
 
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -75,7 +92,9 @@ void Test_vulkan::onAppRender(AppRenderEvent* event){
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
-	CHECK_VK(vkQueueSubmit(device->getQueue(), 1, &submitInfo, VK_NULL_HANDLE),"Failed to submit to queue.");
+	CHECK_VK(vkResetFences(device->getDevice(), 1, &fence),"Failed to reset fence.");
+
+	CHECK_VK(vkQueueSubmit(device->getQueue(), 1, &submitInfo, inFlightFences[currentFrame]->getFence()),"Failed to submit to queue.");
 
 	VkSwapchainKHR swapChains[] = { presentation->getSwapchain() };
 
@@ -91,14 +110,18 @@ void Test_vulkan::onAppRender(AppRenderEvent* event){
 
 	CHECK_VK(vkQueuePresentKHR(device->getQueue(), &presentInfo),"Failed to present image.");
 
-	vkQueueWaitIdle(device->getQueue());
+	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
 void Test_vulkan::onAppCleanUp(AppCleanUpEvent* event) {
 	CHECK_VK(vkDeviceWaitIdle(device->getDevice()),"Failed to wait for idle device.");
 
-	delete imageAvailableSemaphore;
-	delete renderFinishedSemaphore;
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		delete imageAvailableSemaphores[i];
+		delete renderFinishedSemaphores[i];
+		delete inFlightFences[i];
+	}
+
 	delete framebuffers;
 	delete pipeline;
 	delete renderpass;
