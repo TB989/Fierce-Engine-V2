@@ -18,10 +18,13 @@
 *              Pointer* MyFunction(Pointer* myPointer);
 *              Reference& MyFunction(Reference& myReference);
 */
+class VK_Device;
+class VK_Shader;
+class VK_Renderpass;
 
 class VK_Pipeline{
 public:
-	VK_Pipeline(VK_Device* device,VK_Renderpass* renderpass);
+	VK_Pipeline(VK_Device* device,VK_Shader* vertexShader,VK_Shader* fragmentShader,VK_Renderpass* renderpass);
 	~VK_Pipeline();
 
 	VkPipeline getPipeline() { return graphicsPipeline; }
@@ -29,19 +32,17 @@ public:
 private:
 	VkDevice m_device;
 
-	std::vector<char> bufferVert;
-	std::vector<char> bufferFrag;
-	VkShaderModule shaderModuleVert;
-	VkShaderModule shaderModuleFrag;
 	VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
 	VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
-
 	VkPipelineShaderStageCreateInfo shaderStages[2];
+
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+
 	VkViewport viewport{};
 	VkRect2D scissor{};
 	VkPipelineViewportStateCreateInfo viewportState{};
+
 	VkPipelineRasterizationStateCreateInfo rasterizer{};
 	VkPipelineMultisampleStateCreateInfo multisampling{};
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
@@ -51,9 +52,7 @@ private:
 	VkPipeline graphicsPipeline;
 
 private:
-	void loadShaders();
-	void createShaderModules();
-	void createShaderStages();
+	void createShaderStages(VK_Shader* vertexShader, VK_Shader* fragmentShader);
 	void createVertexInput();
 	void createInputAssembly();
 	void createViewportScissor(VK_Device* device);

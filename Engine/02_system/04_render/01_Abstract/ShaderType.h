@@ -4,7 +4,6 @@
 *  -Parent class
 *  -Objects: Object myObject;
 */
-#include "GL_Abstract_Renderer_3D.h"
 
 /* SystemIncludes*/
 
@@ -16,11 +15,8 @@
 *              Reference& MyFunction(Reference& myReference);
 */
 
-class GL_Renderer_Color3D:public GL_Abstract_Renderer_3D{
-public:
-	GL_Renderer_Color3D();
-
-public:
-	void loadShaders() override;
-	void createPipeline() override;
+enum ShaderType{
+	VERTEX_SHADER,
+	FRAGMENT_SHADER,
+	UNKNOWN
 };

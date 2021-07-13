@@ -1,30 +1,31 @@
 #include "GL_Renderer_Geometry2D.h"
 
-#include "02_system/04_render/GL/GL_Shader.h"
-#include "02_system/04_render/GL/GL_Pipeline.h"
-#include "02_system/04_render/GL/VertexAttribute.h"
-
 #include "02_system/01_logging/Logger.h"
+#include "02_system/04_render/GL/Objects/GL_Pipeline.h"
+#include "04_math/02_matrix/Matrix.h"
+#include "05_ECS/Entity.h"
 
-#include "04_math/04_color/Color.h"
-
-GL_Renderer_Geometry2D::GL_Renderer_Geometry2D() {
-	loadShaders();
-	createPipeline();
+GL_Renderer_Geometry2D::GL_Renderer_Geometry2D(GL_Pipeline* pipeline) {
+	m_pipeline = pipeline;
 }
 
-void GL_Renderer_Geometry2D::loadShaders() {
-	vertexShader = new GL_Shader("Shader_Color2D.vs");
-	fragmentShader = new GL_Shader("Shader_Color.fs");
-}
+void GL_Renderer_Geometry2D::render() {
+	m_pipeline->bind();
+	for (Entity2D* entity : entities) {
+		//Prepare entity
+		Mat4 modelMatrix;
+		modelMatrix.setToIdentity();
+		modelMatrix.transform(entity->getTransform());
+		m_pipeline->loadUniform("modelMatrix", &modelMatrix);
 
-void GL_Renderer_Geometry2D::createPipeline() {
-	pipeline = new GL_Pipeline("Geometry_2D", vertexShader, fragmentShader);
-	pipeline->addVertexAttribute(VertexAttribute::POS2);
-	pipeline->addUniformLocation("projectionMatrix");
-	pipeline->addUniformLocation("modelMatrix");
-	pipeline->addUniformLocation("color");
-	pipeline->create();
+		//Load color
+		ComponentMaterialColor* color = (ComponentMaterialColor*)(entity->getComponent(ComponentType::MATERIAL_COLOR));
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+
+		//Render entity
+		renderEntity(entity);
+	}
+	m_pipeline->unbind();
 }
 
 void GL_Renderer_Geometry2D::renderEntity(Entity2D* entity){
@@ -39,7 +40,7 @@ void GL_Renderer_Geometry2D::renderEntity(Entity2D* entity){
 	case RECTANGLE:
 	case TRIANGLE:
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render();
 		break;
 	case CIRCLE:
@@ -52,7 +53,7 @@ void GL_Renderer_Geometry2D::renderEntity(Entity2D* entity){
 
 		for (int i = 0;i<count;i++) {
 			color = colors->getNextColor();
-			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 			mesh->render(i*3,3);
 		}
 		break;
@@ -66,7 +67,7 @@ void GL_Renderer_Geometry2D::renderEntity(Entity2D* entity){
 
 		for (int i = 0; i < count; i++) {
 			color = colors->getNextColor();
-			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 			mesh->render(i * 6, 6);
 		}
 		break;

@@ -4,7 +4,6 @@
 *  -Parent class
 *  -Objects: Object myObject;
 */
-#include "GL_Abstract_Renderer_2D.h"
 
 /* SystemIncludes*/
 
@@ -16,13 +15,6 @@
 *              Reference& MyFunction(Reference& myReference);
 */
 
-class GL_Renderer_Color2D:public GL_Abstract_Renderer_2D{
-public:
-	GL_Renderer_Color2D();
+class GL_Renderer{
 
-public:
-	void loadShaders();
-	void createPipeline();
-
-	void prepareEntity(Entity2D* entity);
 };

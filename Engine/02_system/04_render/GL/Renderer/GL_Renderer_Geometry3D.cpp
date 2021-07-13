@@ -1,27 +1,31 @@
 #include "GL_Renderer_Geometry3D.h"
 
-#include "02_system/04_render/GL/GL_Shader.h"
-#include "02_system/04_render/GL/GL_Pipeline.h"
-#include "02_system/04_render/GL/VertexAttribute.h"
+#include "02_system/01_logging/Logger.h"
+#include "02_system/04_render/GL/Objects/GL_Pipeline.h"
+#include "04_math/02_matrix/Matrix.h"
+#include "05_ECS/Entity.h"
 
-GL_Renderer_Geometry3D::GL_Renderer_Geometry3D() {
-	loadShaders();
-	createPipeline();
+GL_Renderer_Geometry3D::GL_Renderer_Geometry3D(GL_Pipeline* pipeline) {
+	m_pipeline = pipeline;
 }
 
-void GL_Renderer_Geometry3D::loadShaders() {
-	vertexShader = new GL_Shader("Shader_Color3D.vs");
-	fragmentShader = new GL_Shader("Shader_Color.fs");
-}
+void GL_Renderer_Geometry3D::render() {
+	m_pipeline->bind();
+	for (Entity3D* entity : entities) {
+		//Prepare entity
+		Mat4 modelMatrix;
+		modelMatrix.setToIdentity();
+		modelMatrix.transform(entity->getTransform());
+		m_pipeline->loadUniform("modelMatrix", &modelMatrix);
 
-void GL_Renderer_Geometry3D::createPipeline() {
-	pipeline = new GL_Pipeline("Geometry_3D", vertexShader, fragmentShader);
-	pipeline->addVertexAttribute(VertexAttribute::POS3);
-	pipeline->addUniformLocation("projectionMatrix");
-	pipeline->addUniformLocation("viewMatrix");
-	pipeline->addUniformLocation("modelMatrix");
-	pipeline->addUniformLocation("color");
-	pipeline->create();
+		//Load color
+		ComponentMaterialColor* color = (ComponentMaterialColor*)(entity->getComponent(ComponentType::MATERIAL_COLOR));
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+
+		//Render entity
+		renderEntity(entity);
+	}
+	m_pipeline->unbind();
 }
 
 void GL_Renderer_Geometry3D::renderEntity(Entity3D* entity) {
@@ -35,13 +39,13 @@ void GL_Renderer_Geometry3D::renderEntity(Entity3D* entity) {
 	switch (geo->getType()) {
 	case PLANE:
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render();
 		break;
 	case CUBE:
 		for (int i = 0;i<6;i++) {
 			color = colors->getNextColor();
-			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 			mesh->render(i*6, 6);
 		}
 		break;
@@ -54,21 +58,21 @@ void GL_Renderer_Geometry3D::renderEntity(Entity3D* entity) {
 		}
 
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render(0, 3*count);
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render(3 * count, 3 * count);
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render(6 * count, 6 * count);
 
 		if (geo->getAngle() != 360.0f) {
 			color = colors->getNextColor();
-			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 			mesh->render(12*count, 6);
 			color = colors->getNextColor();
-			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 			mesh->render(12 * count+6, 6);
 		}
 
@@ -82,24 +86,24 @@ void GL_Renderer_Geometry3D::renderEntity(Entity3D* entity) {
 		}
 
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render(0, 6 * count);
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render(6 * count, 6 * count);
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render(12 * count, 6 * count);
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render(18 * count, 6 * count);
 
 		if (geo->getAngle() != 360.0f) {
 			color = colors->getNextColor();
-			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 			mesh->render(24 * count, 6);
 			color = colors->getNextColor();
-			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 			mesh->render(24 * count + 6, 6);
 		}
 
@@ -113,18 +117,18 @@ void GL_Renderer_Geometry3D::renderEntity(Entity3D* entity) {
 		}
 
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render(0, 3 * count);
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render(3 * count, 3 * count);
 
 		if (geo->getAngle() != 360.0f) {
 			color = colors->getNextColor();
-			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 			mesh->render(6 * count, 3);
 			color = colors->getNextColor();
-			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 			mesh->render(6 * count + 3, 3);
 		}
 
@@ -141,21 +145,21 @@ void GL_Renderer_Geometry3D::renderEntity(Entity3D* entity) {
 
 		//Circle
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render(counter, 3 * count);
 		counter += 3 * count;
 
 		//Circle rings
 		for (int i = 0;i<geo->getNumRings()-1;i++) {
 			color = colors->getNextColor();
-			pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+			m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 			mesh->render(counter, 6 * count);
 			counter += 6 * count;
 		}
 
 		//Circle
 		color = colors->getNextColor();
-		pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
+		m_pipeline->loadUniform("color", color->getR(), color->getG(), color->getB());
 		mesh->render(counter, 3 * count);
 
 		break;

@@ -1,14 +1,16 @@
 #include "VK_Pipeline.h"
 
 #include "01_core/errorHandling/Exceptions.h"
+#include "VK_Device.h"
+#include "VK_Shader.h"
+#include "VK_Renderpass.h"
+
 #include <fstream>
 
-VK_Pipeline::VK_Pipeline(VK_Device* device, VK_Renderpass* renderpass){
+VK_Pipeline::VK_Pipeline(VK_Device* device, VK_Shader* vertexShader, VK_Shader* fragmentShader,VK_Renderpass* renderpass){
     m_device = device->getDevice();
 
-    loadShaders();
-    createShaderModules();
-    createShaderStages();
+    createShaderStages(vertexShader,fragmentShader);
     createVertexInput();
     createInputAssembly();
     createViewportScissor(device);
@@ -25,70 +27,9 @@ VK_Pipeline::~VK_Pipeline(){
     vkDestroyShaderModule(m_device, shaderModuleFrag, nullptr);
 }
 
-void VK_Pipeline::loadShaders(){
-    std::ifstream file1("C:/Users/Tobias/Desktop/FierceEngine/Engine/xx_ressources/shaders/vulkan/firstShader_vert.spv", std::ios::ate | std::ios::binary);
-
-    if (!file1.is_open()) {
-        throw std::runtime_error("Failed to open file!");
-    }
-
-    size_t fileSize1 = (size_t)file1.tellg();
-    bufferVert.resize(fileSize1);
-    file1.seekg(0);
-    file1.read(bufferVert.data(), fileSize1);
-
-    file1.close();
-
-    std::ifstream file2("C:/Users/Tobias/Desktop/FierceEngine/Engine/xx_ressources/shaders/vulkan/firstShader_frag.spv", std::ios::ate | std::ios::binary);
-
-    if (!file2.is_open()) {
-        throw std::runtime_error("Failed to open file!");
-    }
-
-    size_t fileSize2 = (size_t)file2.tellg();
-    bufferFrag.resize(fileSize2);
-    file2.seekg(0);
-    file2.read(bufferFrag.data(), fileSize2);
-
-    file2.close();
-}
-
-void VK_Pipeline::createShaderModules(){
-    VkShaderModuleCreateInfo createInfo1{};
-    createInfo1.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo1.pNext = nullptr;
-    createInfo1.flags = 0;
-    createInfo1.codeSize = bufferVert.size();
-    createInfo1.pCode = reinterpret_cast<const uint32_t*>(bufferVert.data());
-
-    CHECK_VK(vkCreateShaderModule(m_device, &createInfo1, nullptr, &shaderModuleVert), "Failed to create shader module.");
-
-    VkShaderModuleCreateInfo createInfo2{};
-    createInfo2.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo2.pNext = nullptr;
-    createInfo2.flags = 0;
-    createInfo2.codeSize = bufferFrag.size();
-    createInfo2.pCode = reinterpret_cast<const uint32_t*>(bufferFrag.data());
-
-    CHECK_VK(vkCreateShaderModule(m_device, &createInfo2, nullptr, &shaderModuleFrag), "Failed to create shader module.");
-}
-
-void VK_Pipeline::createShaderStages(){
-    vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    vertShaderStageInfo.pNext = nullptr;
-    vertShaderStageInfo.flags = 0;
-    vertShaderStageInfo.pSpecializationInfo = nullptr;
-    vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-    vertShaderStageInfo.module = shaderModuleVert;
-    vertShaderStageInfo.pName = "main";
-
-    fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    fragShaderStageInfo.pNext = nullptr;
-    fragShaderStageInfo.flags = 0;
-    fragShaderStageInfo.pSpecializationInfo = nullptr;
-    fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    fragShaderStageInfo.module = shaderModuleFrag;
-    fragShaderStageInfo.pName = "main";
+void VK_Pipeline::createShaderStages(VK_Shader* vertexShader, VK_Shader* fragmentShader){
+    vertexShader->fillInShaderStageInfo(vertShaderStageInfo);
+    fragmentShader->fillInShaderStageInfo(fragShaderStageInfo);
 
     shaderStages[0] = vertShaderStageInfo;
     shaderStages[1] = fragShaderStageInfo;
