@@ -5,7 +5,6 @@
 *  -Objects: Object myObject;
 */
 
-#include "02_system/04_render/GL/GL_VAO.h"
 #include "06_Geometry/Geometry.h"
 #include "04_math/04_color/Color.h"
 
@@ -19,6 +18,8 @@
 *              Pointer* MyFunction(Pointer* myPointer);
 *              Reference& MyFunction(Reference& myReference);
 */
+
+class GL_VAO;
 
 enum ComponentType {
 	MESH,
@@ -40,7 +41,7 @@ public:
 
 	ComponentType getComponentType() { return ComponentType::MESH; }
 
-	void render() {
+	/**void render() {
 		m_vao->bind();
 		m_vao->draw();
 		m_vao->unbind();
@@ -50,7 +51,7 @@ public:
 		m_vao->bind();
 		m_vao->draw(first,count);
 		m_vao->unbind();
-	}
+	}*/
 private:
 	GL_VAO* m_vao;
 };

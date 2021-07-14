@@ -3,7 +3,7 @@
 #include "02_system/01_logging/Logger.h"
 
 int main() {
-	Test_vulkan app;
+	Test_ECS app;
 
 	try {
 		app.run();

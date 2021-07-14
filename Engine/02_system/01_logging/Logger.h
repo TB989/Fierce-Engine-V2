@@ -50,4 +50,5 @@ public:
 	static Logger* VK;
 	static Logger* DX;
 	static Logger* MATH;
+	static Logger* ECS;
 };

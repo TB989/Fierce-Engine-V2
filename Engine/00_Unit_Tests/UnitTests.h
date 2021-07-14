@@ -43,7 +43,19 @@ public:
 	void onAppCleanUp(AppCleanUpEvent* event);
 };
 
-class Test_openGLContext : public Core {
+class Test_math : public Core {
+public:
+	Test_math();
+	void onAppInit(AppInitEvent* event);
+};
+
+class Test_ECS : public Core {
+public:
+	Test_ECS();
+	void onAppInit(AppInitEvent* event);
+};
+
+/**class Test_openGLContext : public Core {
 public:
 	Test_openGLContext();
 	void onAppInit(AppInitEvent* event);
@@ -64,12 +76,6 @@ private:
 	Entity3D* hollowCylinder = nullptr;
 	Entity3D* cone = nullptr;
 	Entity3D* sphere = nullptr;
-};
-
-class Test_math : public Core {
-public:
-	Test_math();
-	void onAppInit(AppInitEvent* event);
 };
 
 class VK_Instance;
@@ -102,4 +108,4 @@ private:
 	std::vector<VK_Semaphore*> renderFinishedSemaphores;
 	std::vector<VK_Fence*> inFlightFences;
 	std::vector<VK_Fence*> imagesInFlight;
-};
+};*/

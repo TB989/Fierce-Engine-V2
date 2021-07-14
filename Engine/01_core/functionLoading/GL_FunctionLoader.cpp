@@ -1,7 +1,7 @@
 #include "GL_FunctionLoader.h"
 
 #include "02_system/01_logging/Logger.h"
-#include "02_system/04_render/GL/Fierce_GL.h"
+#include "02_system/04_render/02_GL/01_Objects/Fierce_GL.h"
 
 //**********Vertex arrays**************************
 PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;

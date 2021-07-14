@@ -15,6 +15,6 @@
 *              Reference& MyFunction(Reference& myReference);
 */
 
-class GL_Renderer{
-
+struct Name {
+	const char* name;
 };

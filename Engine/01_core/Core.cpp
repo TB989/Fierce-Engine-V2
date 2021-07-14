@@ -5,7 +5,7 @@
 #include "02_system/02_event/Event.h"
 #include "02_system/03_window/WindowSystem.h"
 #include "02_system/03_window/FierceWindow.h"
-#include "02_system/04_render/GL_RenderSystem.h"
+//#include "02_system/04_render/GL_RenderSystem.h"
 #include "03_io/parser/Parser.h"
 #include "05_ECS/Entity.h"
 #include "04_math/03_transform/Transform.h"
@@ -58,7 +58,7 @@ void Core::run() {
 		m_window->pollEvents();
 		coreUpdate();
 		if (m_settings.api == API::OPEN_GL) {
-			renderSystem->render();
+			//renderSystem->render();
 		}
 		coreRender();
 	}
@@ -78,7 +78,7 @@ void Core::coreInit() {
 		Loggers::CORE->info("Starting render system.");
 		switch (m_settings.api) {
 		case API::OPEN_GL:
-			renderSystem = new GL_RenderSystem(this, &m_settings, camera);
+			//renderSystem = new GL_RenderSystem(this, &m_settings, camera);
 			break;
 		case API::VULKAN:
 			break;
