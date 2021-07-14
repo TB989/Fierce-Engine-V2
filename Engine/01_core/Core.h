@@ -55,5 +55,5 @@ private:
 
 	FierceWindow* m_window=nullptr;
 
-	Entity3D* camera = nullptr;
+	//int camera;
 };

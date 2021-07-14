@@ -16,8 +16,6 @@
 *              Pointer* MyFunction(Pointer* myPointer);
 *              Reference& MyFunction(Reference& myReference);
 */
-class Entity2D;
-class Entity3D;
 
 class Test_logging : public Core {
 
@@ -55,7 +53,10 @@ public:
 	void onAppInit(AppInitEvent* event);
 };
 
-/**class Test_openGLContext : public Core {
+class EntityManager;
+class ComponentManager;
+
+class Test_openGLContext : public Core {
 public:
 	Test_openGLContext();
 	void onAppInit(AppInitEvent* event);
@@ -64,21 +65,29 @@ public:
 	void onWindowResize(WindowResizeEvent* event);
 
 	void onKeyPressed(KeyDownEvent* event);
-private:
-	Entity2D* rectangle=nullptr;
-	Entity2D* triangle = nullptr;
-	Entity2D* circle = nullptr;
-	Entity2D* circleRing = nullptr;
 
-	Entity3D* plane = nullptr;
-	Entity3D* cube = nullptr;
-	Entity3D* cylinder = nullptr;
-	Entity3D* hollowCylinder = nullptr;
-	Entity3D* cone = nullptr;
-	Entity3D* sphere = nullptr;
+private:
+	void removeComponents2D(int entity);
+	void removeComponents3D(int entity);
+
+private:
+	EntityManager* ent;
+	ComponentManager* comp;
+
+	int rectangle;
+	int triangle;
+	int circle;
+	int circleRing;
+	
+	int plane;
+	int cube;
+	int cylinder;
+	int hollowCylinder;
+	int cone;
+	int sphere;
 };
 
-class VK_Instance;
+/**class VK_Instance;
 class VK_Device;
 class VK_Presentation;
 class VK_Renderpass;

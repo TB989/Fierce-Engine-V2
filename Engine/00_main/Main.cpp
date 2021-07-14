@@ -3,7 +3,7 @@
 #include "02_system/01_logging/Logger.h"
 
 int main() {
-	Test_ECS app;
+	Test_openGLContext app;
 
 	try {
 		app.run();

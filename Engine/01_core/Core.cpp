@@ -7,7 +7,6 @@
 #include "02_system/03_window/FierceWindow.h"
 //#include "02_system/04_render/GL_RenderSystem.h"
 #include "03_io/parser/Parser.h"
-#include "05_ECS/Entity.h"
 #include "04_math/03_transform/Transform.h"
 #include "04_math/01_vector/Vector.h"
 
@@ -72,8 +71,8 @@ void Core::coreInit() {
 		m_window = windowSystem->getWindow();
 
 		Loggers::CORE->info("Creating camera.");
-		camera = new Entity3D("Camera");
-		camera->setTransform(new Transform3D(0, 2, 0, 1,1,1, 0, 0, 0));
+		/**camera = new Entity3D("Camera");
+		camera->setTransform(new Transform3D(0, 2, 0, 1,1,1, 0, 0, 0));*/
 
 		Loggers::CORE->info("Starting render system.");
 		switch (m_settings.api) {
@@ -117,7 +116,8 @@ void Core::onMouseMoved(MouseMoveEvent* event){
 	int dx = m_x_alt - event->m_x;
 	int dy = m_y_alt - event->m_y;
 
-	Vector3f* angles=camera->getTransform()->getRotation();
+	//Vector3f* angles=camera->getTransform()->getRotation();
+	Vector3f* angles = new Vector3f();
 
 	float angleX = angles->getX() - 0.3f * dy;
 	if (angleX>45.0f) {
@@ -137,8 +137,11 @@ void Core::onMouseMoved(MouseMoveEvent* event){
 
 void Core::onKeyPressed(KeyDownEvent* event) {
 	if (event->m_key == 'W') {
-		Vector3f* angles = camera->getTransform()->getRotation();
-		Vector3f* position = camera->getTransform()->getPosition();
+		//Vector3f* angles = camera->getTransform()->getRotation();
+		//Vector3f* position = camera->getTransform()->getPosition();
+		Vector3f* angles = new Vector3f();
+		Vector3f* position = new Vector3f();
+
 		float angleY = angles->getY();
 		float s = sin(M_PI / 180.0f * angleY);
 		float c = cos(M_PI / 180.0f * angleY);
@@ -147,8 +150,11 @@ void Core::onKeyPressed(KeyDownEvent* event) {
 	}
 
 	if (event->m_key == 'S') {
-		Vector3f* angles = camera->getTransform()->getRotation();
-		Vector3f* position = camera->getTransform()->getPosition();
+		//Vector3f* angles = camera->getTransform()->getRotation();
+		//Vector3f* position = camera->getTransform()->getPosition();
+		Vector3f* angles = new Vector3f();
+		Vector3f* position = new Vector3f();
+
 		float angleY = angles->getY();
 		float s = sin(M_PI / 180.0f * angleY);
 		float c = cos(M_PI / 180.0f * angleY);

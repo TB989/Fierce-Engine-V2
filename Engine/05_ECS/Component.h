@@ -39,6 +39,10 @@ public:
 		m_vao = vao;
 	}
 
+	ComponentMesh() {
+		m_vao = nullptr;
+	}
+
 	ComponentType getComponentType() { return ComponentType::MESH; }
 
 	/**void render() {
@@ -64,6 +68,14 @@ public:
 		m_angle = angle;
 		m_innerRadius = innerRadius;
 		m_numRings = numRings;
+	}
+
+	ComponentGeometry() {
+		m_type = GeometryType::RECTANGLE;
+		m_numPoints = 0;
+		m_angle = 0;
+		m_innerRadius = 0;
+		m_numRings = 0;
 	}
 
 	ComponentType getComponentType() { return ComponentType::GEOMETRY; }
@@ -101,6 +113,8 @@ public:
 	ComponentMaterialColors(std::vector<Color3f*> colors) {
 		m_colors = colors;
 	}
+
+	ComponentMaterialColors() {}
 
 	Color3f* getNextColor() {
 		counter++;
